@@ -46,11 +46,13 @@ function connectToPureCloud(clientId, clientSecret, environment) {
   });
 }
 
-function getUsers() {
+//#region Users
+
+function getItems(type) {
   return new Promise((resolve, reject) => {
     try {
       $.ajax({
-        url: baseUrl + "/users",
+        url: baseUrl + "/" + type,
         method: "POST",
         beforeSend: function (xhr) {
           xhr.setRequestHeader("Content-Type", "application/json");
@@ -82,11 +84,11 @@ function getUsers() {
   });
 }
 
-function deleteUsers(users) {
+function deleteItems(type, items) {
   return new Promise((resolve, reject) => {
     try {
       $.ajax({
-        url: baseUrl + "/users",
+        url: baseUrl + "/" + type,
         method: "DELETE",
         beforeSend: function (xhr) {
           xhr.setRequestHeader("Content-Type", "application/json");
@@ -95,7 +97,7 @@ function deleteUsers(users) {
         data: JSON.stringify({
           env: pureCloudEnvironment,
           token: pureCloudToken,
-          items: users
+          items: items
         })
       }).done((data) => {
         if (data.hasOwnProperty("errorMessage")) {
@@ -118,3 +120,5 @@ function deleteUsers(users) {
     }
   });
 }
+
+//#endregion
