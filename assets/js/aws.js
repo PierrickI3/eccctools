@@ -1,10 +1,14 @@
-const tokenUrl = "https://rco60s22e3.execute-api.eu-west-1.amazonaws.com/DEV/token";
+const baseUrl = " https://qi8gcyskj4.execute-api.eu-west-1.amazonaws.com/DEV";
+const tokenUrl = baseUrl + "/token";
+
 const apiKey = "CovgPVCcHJ60ZGtdGCdMqaCC28qKVW0M1MYm2Qhs";
 
-var token = undefined;
+var pureCloudToken = undefined;
+var pureCloudEnvironment = undefined;
 
 function connectToPureCloud(clientId, clientSecret, environment) {
   console.log(`Connecting to PureCloud... Client Id: ${clientId}, Client Secret: ${clientSecret}, environment: ${environment}`);
+  pureCloudEnvironment = environment;
   return new Promise((resolve, reject) => {
     try {
       $.ajax({
@@ -24,7 +28,7 @@ function connectToPureCloud(clientId, clientSecret, environment) {
           console.error(data);
           reject(JSON.stringify(data.errorMessage));
         } else if (data.hasOwnProperty("token")) {
-          token = data.token;
+          pureCloudToken = data.token;
           resolve(data.token);
         } else {
           console.error("Unknown response:", data);
@@ -46,12 +50,53 @@ function getUsers() {
   return new Promise((resolve, reject) => {
     try {
       $.ajax({
-        url: tokenUrl + "?token=" + token,
-        method: "GET",
+        url: baseUrl + "/users",
+        method: "POST",
         beforeSend: function (xhr) {
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.setRequestHeader("x-api-key", apiKey);
+        },
+        data: JSON.stringify({
+          env: pureCloudEnvironment,
+          token: pureCloudToken
+        })
+      }).done((data) => {
+        if (data.hasOwnProperty("errorMessage")) {
+          console.error(data);
+          reject(JSON.stringify(data.errorMessage));
+        } else if (data) {
+          resolve(data.items);
+        } else {
+          console.error("Unknown response:", data);
         }
+      }).fail((jqXHR, textStatus, errorThrown) => {
+        console.error(jqXHR);
+        console.error(textStatus);
+        console.error(errorThrown);
+        reject(errorThrown);
+      })
+    } catch (error) {
+      console.error(error);
+      reject(error);
+    }
+  });
+}
+
+function deleteUsers(users) {
+  return new Promise((resolve, reject) => {
+    try {
+      $.ajax({
+        url: baseUrl + "/users",
+        method: "DELETE",
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.setRequestHeader("x-api-key", apiKey);
+        },
+        data: JSON.stringify({
+          env: pureCloudEnvironment,
+          token: pureCloudToken,
+          items: users
+        })
       }).done((data) => {
         if (data.hasOwnProperty("errorMessage")) {
           console.error(data);
@@ -65,8 +110,8 @@ function getUsers() {
         console.error(jqXHR);
         console.error(textStatus);
         console.error(errorThrown);
-        reject(error);
-      })
+        reject(errorThrown);
+      });
     } catch (error) {
       console.error(error);
       reject(error);

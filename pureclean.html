@@ -37,7 +37,7 @@
         <div class="sidebar-menu">
             <div class="sidebar-header">
                 <a class="navbar-brand" href="/">
-                    <span><i class="wi wi-sunset"></i> ECCC Tools</span>
+                    <span><i class="wi wi-sunset"></i> EC<sup>3</sup> Tools</span>
                 </a>
             </div>
             <div class="main-menu">
@@ -96,6 +96,12 @@
             <!-- page title area end -->
             <div class="main-content-inner">
                 <div class="mt-5 mb-5 card card-bordered">
+                    <div class="card-body text-center">
+                        <p>Clean any of your PureCloud organizations by selecting users/queues/flows/etc. and deleting them.</p>
+                        <p>Useful if you run trials from your dev orgs</p>
+                    </div>
+                </div>
+                <div class="mt-5 mb-5 card card-bordered">
                     <div class="card-body">
                         <small class="form-text text-muted text-center">Populate all fields below then click on <code>Connect</code></small><br />
                         <div class="form-group">
@@ -132,6 +138,9 @@
                                 </div>
                                 <div id="purecloudusersaccordion" class="collapse show" data-parent="#purecloudaccordion">
                                     <div class="card-body">
+                                        <button id="select-all-users" class="btn button-default mr-2">Select/Deselect All</button>
+                                        <button id="select-invert-users" class="btn button-default mr-2">Invert Selection</button>
+                                        <button id="deleteUsers" disabled type="button" class="btn btn-danger">Delete Selected Users</button>
                                         <table class="table table-striped table-hover table-sm">
                                             <thead>
                                                 <tr>
@@ -146,9 +155,6 @@
                                             <tbody id="users">
                                             </tbody>
                                         </table>
-                                        <button id="select-all-users" class="btn button-default">Select/Deselect All</button>
-                                        <button id="select-invert-users" class="btn button-default">Invert Selection</button>
-                                        <button id="deleteUsers" disabled type="button" class="btn btn-danger">Delete Selected Users</button>
                                         <div class="mt-5">
 
                                         </div>
@@ -218,52 +224,8 @@
 
     <script>
 
+        // Init
         $("#pureCloudObjects").hide();
-
-        //#region PureCloud
-
-        // Connect to PureCloud Button
-        $("#connect").click(() => {
-            connectToPureCloud($("#clientId").val(), $("#clientSecret").val(), $("#environment").children("option:selected").val())
-                .then((token) => {
-                    $("#pureCloudObjects").show();
-                    showMessage("Connected to PureCloud");
-                    loadObjects();
-                }).catch((error) => {
-                    console.error(error);
-                    showMessage(error, true);
-                    //$("#pureCloudObjects").hide();
-                });
-        });
-
-        function loadObjects() {
-            // Load Users
-            // getUsers().then((users) => {
-            //     populateTable("users", users.entities);
-            // });
-        }
-
-        function populateTable(tableName, items) {
-            $.each(items, (i, item) => {
-                console.log("Adding", item);
-                var row = $("<tr />").appendTo("#" + tableName);
-
-                // Checkbox
-                var checkItem = $("<td />", { class: "active" }).appendTo(row);
-                $("<input />", { type: "checkbox", class: "select-item-" + tableName + " checkbox", name: "select-item-" + tableName }).val(item.id).appendTo(checkItem);
-
-                // Id Column
-                $("<td />").text(item.id).appendTo(row);
-
-                // Name Column
-                $("<td />").text(item.name).appendTo(row);
-
-                // Email Address Column
-                $("<td />").text(item.email).appendTo(row);
-            });
-        }
-
-        //#endregion PureCloud
 
         // Enable/Disable Delete Button
         function checkIfItemsAreSelected(button, itemsControl) {
@@ -306,28 +268,75 @@
                 checkIfItemsAreSelected("#deleteUsers", "input.select-item-users");
             });
 
-            //check selected items
-            $("input.select-item-users").click(function () {
-                var checked = this.checked;
-                console.log(checked);
-                checkSelected();
-            });
-
             //check is all selected
             function checkSelected() {
                 var all = $("input.select-all-users")[0];
                 var total = $("input.select-item-users").length;
                 var len = $("input.select-item-users:checked:checked").length;
                 checkIfItemsAreSelected("#deleteUsers", "input.select-item-users");
-                console.log("total:" + total);
-                console.log("len:" + len);
+                console.log("total:", total);
+                console.log("selected:", len);
                 all.checked = len === total;
+            }
+
+            // Connect to PureCloud Button
+            $("#connect").click(() => {
+                connectToPureCloud($("#clientId").val(), $("#clientSecret").val(), $("#environment").children("option:selected").val())
+                    .then((token) => {
+                        $("#pureCloudObjects").show();
+                        showMessage("Connected to PureCloud");
+                        showMessage("Please wait while all objects are retrieved...");
+                        loadObjects();
+                    }).catch((error) => {
+                        console.error(error);
+                        showMessage(error, true);
+                    });
+            });
+
+            function loadObjects() {
+                // Load Users
+                getUsers().then((users) => {
+                    console.log("Users:", users);
+                    populateTable("users", users);
+                });
+            }
+
+            function populateTable(tableName, items) {
+                $("#" + tableName).empty();
+                $.each(items, (i, item) => {
+                    //console.log("Adding", item);
+                    var row = $("<tr />").appendTo("#" + tableName);
+
+                    // Checkbox
+                    var checkItem = $("<td />", { class: "active" }).appendTo(row);
+                    $("<input />", { type: "checkbox", class: "select-item-" + tableName + " checkbox", name: "select-item-" + tableName }).val(item.id).appendTo(checkItem);
+
+                    // Id Column
+                    $("<td />").text(item.id).appendTo(row);
+
+                    // Name Column
+                    $("<td />").text(item.name).appendTo(row);
+
+                    // Email Address Column
+                    $("<td />").text(item.email).appendTo(row);
+                });
+
+                //check selected items
+                $("input.select-item-users").click(function () {
+                    var checked = this.checked;
+                    checkSelected();
+                });
             }
 
             $("#deleteUsers").click(() => {
                 var selectedUsers = getSelectedUsers();
                 console.log("Selected Users:", selectedUsers);
-                // Call AWS to delete users
+                deleteUsers(selectedUsers).then((response) => {
+                    console.log("Delete response:", response);
+                    showMessage(`${response.count} users deleted`);
+                    loadObjects();
+                    checkSelected();
+                });
             });
         });
 
@@ -340,18 +349,18 @@
         }
 
         // test
-        populateTable("users", [
-            {
-                id: "ba25172f-0a6e-4806-82b6-1affbeb0f363",
-                name: "Agent_DSO",
-                email: "agent_dso@test.com"
-            },
-            {
-                id: "ca25172f-0a6e-4806-82b6-1affbeb0f363",
-                name: "Agent_DSO2",
-                email: "agent_dso2@test.com"
-            }]
-        );
+        // populateTable("users", [
+        //     {
+        //         id: "ba25172f-0a6e-4806-82b6-1affbeb0f363",
+        //         name: "Agent_DSO",
+        //         email: "agent_dso@test.com"
+        //     },
+        //     {
+        //         id: "ca25172f-0a6e-4806-82b6-1affbeb0f363",
+        //         name: "Agent_DSO2",
+        //         email: "agent_dso2@test.com"
+        //     }]
+        // );
 
     </script>
 </body>
