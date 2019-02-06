@@ -1,0 +1,359 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>PureClean</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="assets/images/icon/favicon.ico">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/metisMenu.css">
+    <link rel="stylesheet" href="assets/css/slicknav.min.css">
+    <link rel="stylesheet" href="assets/css/jquery.toast.min.css">
+    <!-- others css -->
+    <link rel="stylesheet" href="assets/css/typography.css">
+    <link rel="stylesheet" href="assets/css/default-css.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <!-- modernizr css -->
+    <script src="assets/js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+
+<body>
+    <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <!-- preloader area start -->
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+    <!-- preloader area end -->
+    <!-- page container area start -->
+    <div class="page-container">
+        <!-- sidebar menu area start -->
+        <div class="sidebar-menu">
+            <div class="sidebar-header">
+                <a class="navbar-brand" href="/">
+                    <span><i class="wi wi-sunset"></i> ECCC Tools</span>
+                </a>
+            </div>
+            <div class="main-menu">
+                <div class="menu-inner">
+                    <nav>
+                        <ul class="metismenu" id="menu">
+                            <li class="active">
+                                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-desktop"></i><span>PureCloud Utilities</span></a>
+                                <ul class="collapse">
+                                    <li class="active"><a href="index.html">PureClean</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <!-- sidebar menu area end -->
+        <!-- main content area start -->
+        <div class="main-content">
+            <!-- header area start -->
+            <div class="header-area">
+                <div class="row align-items-center">
+                    <!-- nav and search button -->
+                    <div class="col-md-6 col-sm-8 clearfix">
+                        <div class="nav-btn pull-left">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                    <!-- profile info & task notification -->
+                    <div class="col-md-6 col-sm-4 clearfix">
+                        <ul class="notification-area pull-right">
+                            <li id="full-view"><i class="ti-fullscreen"></i></li>
+                            <li id="full-view-exit"><i class="ti-zoom-out"></i></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- header area end -->
+            <!-- page title area start -->
+            <div class="page-title-area">
+                <div class="row align-items-center">
+                    <div class="col-sm-6">
+                        <div class="breadcrumbs-area clearfix">
+                            <h4 class="page-title pull-left">PureClean</h4>
+                            <ul class="breadcrumbs pull-left">
+                                <li><a href="index.html">Home</a></li>
+                                <li><span>PureClean</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- page title area end -->
+            <div class="main-content-inner">
+                <div class="mt-5 mb-5 card card-bordered">
+                    <div class="card-body">
+                        <small class="form-text text-muted text-center">Populate all fields below then click on <code>Connect</code></small><br />
+                        <div class="form-group">
+                            <label for="clientId">Client Id</label>
+                            <input type="text" class="form-control" id="clientId" placeholder="Enter your client id" value="489d03cb-e7c5-4f62-8fdb-b391d9b70ce6">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientSecret">Client Secret</label>
+                            <input type="password" class="form-control" id="clientSecret" placeholder="Enter your client secret" value="cvlV1EAkNZGTM6WavqIRhCOKMowmyGp6qEZciW0bTcs">
+                        </div>
+                        <div class="form-group">
+                            <label for="environment">PureCloud Environment</label>
+                            <select class="form-control" id="environment">
+                                <option value="mypurecloud.ie" selected>mypurecloud.ie (Ireland)</option>
+                                <option value="mypurecloud.com">mypurecloud.com (US)</option>
+                                <option value="mypurecloud.de">mypurecloud.de (Germany)</option>
+                                <option value="mypurecloud.com.au">mypurecloud.com.au (Australia/New Zealand)</option>
+                                <option value="mypurecloud.jp">mypurecloud.jp (Japan)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button id="connect" type="button" class="btn btn-primary">Connect</button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="mt-5 mb-5 card card-bordered" id="pureCloudObjects">
+                    <div class="card-body">
+                        <h4 class="header-title">PureCloud Objects</h4>
+                        <div id="purecloudaccordion" class="according accordion-s3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudusersaccordion">Users</a>
+                                </div>
+                                <div id="purecloudusersaccordion" class="collapse show" data-parent="#purecloudaccordion">
+                                    <div class="card-body">
+                                        <table class="table table-striped table-hover table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th class="active">
+                                                        <input type="checkbox" class="select-all-users checkbox" name="select-all-users" />
+                                                    </th>
+                                                    <th class="success">Id</th>
+                                                    <th class="warning">Name</th>
+                                                    <th class="danger">Email Address</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="users">
+                                            </tbody>
+                                        </table>
+                                        <button id="select-all-users" class="btn button-default">Select/Deselect All</button>
+                                        <button id="select-invert-users" class="btn button-default">Invert Selection</button>
+                                        <button id="deleteUsers" disabled type="button" class="btn btn-danger">Delete Selected Users</button>
+                                        <div class="mt-5">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <a class="collapsed btn btn-link" data-toggle="collapse" href="#queues">Queues</a>
+                                </div>
+                                <div id="queues" class="collapse" data-parent="#purecloudaccordion">
+                                    <div class="card-body">
+                                        Add list of queues here
+                                        <div class="mt-5">
+                                            <button id="deleteQueues" disabled type="button" class="btn btn-danger">Delete Selected Queues</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- main content area end -->
+        <!-- footer area start-->
+        <footer>
+            <div class="footer-area">
+                <p>© Copyright 2019. All rights reserved.</p>
+            </div>
+        </footer>
+        <!-- footer area end-->
+    </div>
+    <!-- page container area end -->
+    <!-- jquery latest version -->
+    <script src="assets/js/vendor/jquery-2.2.4.min.js"></script>
+    <!-- bootstrap 4 js -->
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/owl.carousel.min.js"></script>
+    <script src="assets/js/metisMenu.min.js"></script>
+    <script src="assets/js/jquery.slimscroll.min.js"></script>
+    <script src="assets/js/jquery.slicknav.min.js"></script>
+
+    <!-- start chart js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    <!-- start highcharts js -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <!-- start zingchart js -->
+    <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+    <script>
+        zingchart.MODULESDIR = "https://cdn.zingchart.com/modules/";
+        ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9", "ee6b7db5b51705a13dc2339db3edaf6d"];
+    </script>
+    <!-- jQuery Toast -->
+    <script src="assets/js/jquery.toast.min.js"></script>
+    <!-- all line chart activation -->
+    <script src="assets/js/line-chart.js"></script>
+    <!-- all pie chart -->
+    <script src="assets/js/pie-chart.js"></script>
+    <!-- others plugins -->
+    <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/scripts.js"></script>
+    <!-- This page's scripts -->
+    <script src="assets/js/aws.js"></script>
+    <script src="assets/js/notifications.js"></script>
+
+    <script>
+
+        $("#pureCloudObjects").hide();
+
+        //#region PureCloud
+
+        // Connect to PureCloud Button
+        $("#connect").click(() => {
+            connectToPureCloud($("#clientId").val(), $("#clientSecret").val(), $("#environment").children("option:selected").val())
+                .then((token) => {
+                    $("#pureCloudObjects").show();
+                    showMessage("Connected to PureCloud");
+                    loadObjects();
+                }).catch((error) => {
+                    console.error(error);
+                    showMessage(error, true);
+                    //$("#pureCloudObjects").hide();
+                });
+        });
+
+        function loadObjects() {
+            // Load Users
+            // getUsers().then((users) => {
+            //     populateTable("users", users.entities);
+            // });
+        }
+
+        function populateTable(tableName, items) {
+            $.each(items, (i, item) => {
+                console.log("Adding", item);
+                var row = $("<tr />").appendTo("#" + tableName);
+
+                // Checkbox
+                var checkItem = $("<td />", { class: "active" }).appendTo(row);
+                $("<input />", { type: "checkbox", class: "select-item-" + tableName + " checkbox", name: "select-item-" + tableName }).val(item.id).appendTo(checkItem);
+
+                // Id Column
+                $("<td />").text(item.id).appendTo(row);
+
+                // Name Column
+                $("<td />").text(item.name).appendTo(row);
+
+                // Email Address Column
+                $("<td />").text(item.email).appendTo(row);
+            });
+        }
+
+        //#endregion PureCloud
+
+        // Enable/Disable Delete Button
+        function checkIfItemsAreSelected(button, itemsControl) {
+            var len = $(itemsControl + ":checked:checked").length;
+            if (len > 0) {
+                $(button).removeAttr("disabled");
+            } else {
+                $(button).attr("disabled", true);
+            }
+        }
+
+        // Select Buttons - Users
+        $(function () {
+
+            // Button select/deselect all
+            $("#select-all-users").click(function () {
+                var all = $("input.select-all-users")[0];
+                all.checked = !all.checked
+                var checked = all.checked;
+                $("input.select-item-users").each(function (index, item) {
+                    item.checked = checked;
+                });
+                checkIfItemsAreSelected("#deleteUsers", "input.select-item-users");
+            });
+
+            //button select invert
+            $("#select-invert-users").click(function () {
+                $("input.select-item-users").each(function (index, item) {
+                    item.checked = !item.checked;
+                });
+                checkSelected();
+            });
+
+            //column checkbox select all or cancel
+            $("input.select-all-users").click(function () {
+                var checked = this.checked;
+                $("input.select-item-users").each(function (index, item) {
+                    item.checked = checked;
+                });
+                checkIfItemsAreSelected("#deleteUsers", "input.select-item-users");
+            });
+
+            //check selected items
+            $("input.select-item-users").click(function () {
+                var checked = this.checked;
+                console.log(checked);
+                checkSelected();
+            });
+
+            //check is all selected
+            function checkSelected() {
+                var all = $("input.select-all-users")[0];
+                var total = $("input.select-item-users").length;
+                var len = $("input.select-item-users:checked:checked").length;
+                checkIfItemsAreSelected("#deleteUsers", "input.select-item-users");
+                console.log("total:" + total);
+                console.log("len:" + len);
+                all.checked = len === total;
+            }
+
+            $("#deleteUsers").click(() => {
+                var selectedUsers = getSelectedUsers();
+                console.log("Selected Users:", selectedUsers);
+                // Call AWS to delete users
+            });
+        });
+
+        function getSelectedUsers() {
+            var items = [];
+            $("input.select-item-users:checked:checked").each(function (index, item) {
+                items[index] = item.value;
+            });
+            return items;
+        }
+
+        // test
+        populateTable("users", [
+            {
+                id: "ba25172f-0a6e-4806-82b6-1affbeb0f363",
+                name: "Agent_DSO",
+                email: "agent_dso@test.com"
+            },
+            {
+                id: "ca25172f-0a6e-4806-82b6-1affbeb0f363",
+                name: "Agent_DSO2",
+                email: "agent_dso2@test.com"
+            }]
+        );
+
+    </script>
+</body>
+
+</html>
