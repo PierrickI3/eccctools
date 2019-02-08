@@ -108,11 +108,11 @@
                         <small class="form-text text-muted">Populate all fields below then click on <code>Connect</code></small><br />
                         <div class="form-group">
                             <label for="clientId">Client Id</label>
-                            <input type="text" class="form-control" id="clientId" placeholder="Enter your client id" value="489d03cb-e7c5-4f62-8fdb-b391d9b70ce6">
+                            <input type="text" class="form-control" id="clientId" placeholder="Enter your client id">
                         </div>
                         <div class="form-group">
                             <label for="clientSecret">Client Secret</label>
-                            <input type="password" class="form-control" id="clientSecret" placeholder="Enter your client secret" value="cvlV1EAkNZGTM6WavqIRhCOKMowmyGp6qEZciW0bTcs">
+                            <input type="password" class="form-control" id="clientSecret" placeholder="Enter your client secret">
                         </div>
                         <div class="form-group">
                             <label for="environment">PureCloud Environment</label>
@@ -352,6 +352,33 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudaccordion-webChatDeployments"><i class="ti-angle-right"></i> Web Chat Deployments</a>
+                                </div>
+                                <div id="purecloudaccordion-webChatDeployments" class="collapse" data-parent="#purecloudaccordion">
+                                    <div class="card-body">
+                                        <button id="select-all-webChatDeployments" class="btn button-default mr-2">Select/Deselect All</button>
+                                        <button id="select-invert-webChatDeployments" class="btn button-default mr-2">Invert Selection</button>
+                                        <button id="delete-webChatDeployments" disabled type="button" class="btn btn-danger"><i class="ti-trash"></i> Delete Selected Presence Definitions</button>
+                                        <table class="table table-striped table-hover table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th class="active">
+                                                        <input type="checkbox" class="select-all-webChatDeployments checkbox" name="select-all-webChatDeployments" />
+                                                    </th>
+                                                    <th class="success">Id</th>
+                                                    <th class="warning">Name</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="webChatDeployments">
+                                            </tbody>
+                                        </table>
+                                        <div class="mt-5">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -441,6 +468,10 @@
             getItems("scripts").then((scripts) => {
                 console.log("Scripts:", scripts);
                 populateTable("scripts", scripts);
+            });
+            getItems("webChatDeployments").then((webChatDeployments) => {
+                console.log("Web Chat Deployments:", webChatDeployments);
+                populateTable("webChatDeployments", webChatDeployments);
             });
         }
 
@@ -859,6 +890,50 @@
                 deselectAllItems("scripts"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("scripts");
+            });
+        });
+
+        //#endregion
+
+        //#region Web Chat Deployments
+
+        // Button select/deselect all
+        $("#select-all-webChatDeployments").click(function () {
+            var all = $("input.select-all-webChatDeployments")[0];
+            all.checked = !all.checked
+            var checked = all.checked;
+            $("input.select-item-webChatDeployments").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-webChatDeployments", "input.select-item-webChatDeployments");
+        });
+
+        //button select invert
+        $("#select-invert-webChatDeployments").click(function () {
+            $("input.select-item-webChatDeployments").each(function (index, item) {
+                item.checked = !item.checked;
+            });
+            checkSelectedItems("webChatDeployments");
+        });
+
+        //column checkbox select all or cancel
+        $("input.select-all-webChatDeployments").click(function () {
+            var checked = this.checked;
+            $("input.select-item-webChatDeployments").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-webChatDeployments", "input.select-item-webChatDeployments");
+        });
+
+        $("#delete-webChatDeployments").click(() => {
+            var selectedItems = getSelectedItems("webChatDeployments");
+            console.log("Selected webChatDeployments:", selectedItems);
+            deleteItems("webChatDeployments", selectedItems).then((response) => {
+                console.log("Delete response:", response);
+                showMessage("Web Chat Deployment(s) deleted");
+                deselectAllItems("webChatDeployments"); //Otherwise, they will still count as selected after refresh
+                loadObjects();
+                checkSelectedItems("webChatDeployments");
             });
         });
 
