@@ -134,6 +134,7 @@
                     <div class="card-body">
                         <h4 class="header-title">PureCloud Objects</h4>
                         <small class="text-muted">Click on an object category to view all objects for that category</small>
+                        <button id="refresh-all" type="button" class="btn btn-info">Refresh All Objects</button>
                         <div id="purecloudaccordion" class="accordion accordion-s3 mt-3">
                             <!-- Users -->
                             <div class="card mb-3">
@@ -499,6 +500,10 @@
 
         //#region Generic functions
 
+        $("#refresh-all").click(function () {
+            loadObjects();
+        });
+
         function loadObjects() {
             // Load Users
             getItems("users").then((users) => {
@@ -538,6 +543,14 @@
                 console.log("Web Chat Deployments:", webChatDeployments);
                 populateTable("webChatDeployments", webChatDeployments);
             });
+            // getItems("recordings").then((flows) => {
+            //     console.log("Recordings:", recordings);
+            //     populateTable("recordings", recordings);
+            // });
+            // getItems("divisions").then((flows) => {
+            //     console.log("Divisions:", divisions);
+            //     populateTable("divisions", divisions);
+            // });
         }
 
         function populateTable(tableName, items) {
