@@ -99,11 +99,13 @@
                     <div class="card-body text-center">
                         <p>Clean any of your PureCloud organizations by selecting users/queues/flows/etc. and deleting them.</p>
                         <p>Useful if you run trials from your dev orgs</p>
+                        <p><i>Flows are not yet available as it requires more work</i></p>
                     </div>
                 </div>
                 <div class="mt-5 mb-5 card card-bordered">
                     <div class="card-body">
-                        <small class="form-text text-muted text-center">Populate all fields below then click on <code>Connect</code></small><br />
+                        <h4 class="header-title">PureCloud Connection</h4>
+                        <small class="form-text text-muted">Populate all fields below then click on <code>Connect</code></small><br />
                         <div class="form-group">
                             <label for="clientId">Client Id</label>
                             <input type="text" class="form-control" id="clientId" placeholder="Enter your client id" value="489d03cb-e7c5-4f62-8fdb-b391d9b70ce6">
@@ -123,7 +125,7 @@
                             </select>
                         </div>
                         <div>
-                            <button id="connect" type="button" class="btn btn-primary">Connect</button>
+                            <button id="connect" type="button" class="btn btn-primary"><i class="ti-unlock"></i> Connect</button>
                         </div>
 
                     </div>
@@ -131,16 +133,17 @@
                 <div class="mt-5 mb-5 card card-bordered" id="pureCloudObjects">
                     <div class="card-body">
                         <h4 class="header-title">PureCloud Objects</h4>
-                        <div id="purecloudaccordion" class="according accordion-s3">
-                            <div class="card">
+                        <small class="text-muted">Click on an object category to view all objects for that category</small>
+                        <div id="purecloudaccordion" class="accordion accordion-s3 mt-3">
+                            <div class="card mb-3">
                                 <div class="card-header">
-                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudusersaccordion">Users</a>
+                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudusersaccordion"><i class="ti-angle-right"></i> Users</a>
                                 </div>
-                                <div id="purecloudusersaccordion" class="collapse show" data-parent="#purecloudaccordion">
+                                <div id="purecloudusersaccordion" class="collapse" data-parent="#purecloudaccordion">
                                     <div class="card-body">
                                         <button id="select-all-users" class="btn button-default mr-2">Select/Deselect All</button>
                                         <button id="select-invert-users" class="btn button-default mr-2">Invert Selection</button>
-                                        <button id="delete-users" disabled type="button" class="btn btn-danger">Delete Selected Users</button>
+                                        <button id="delete-users" disabled type="button" class="btn btn-danger"><i class="ti-trash"></i> Delete Selected Users</button>
                                         <table class="table table-striped table-hover table-sm">
                                             <thead>
                                                 <tr>
@@ -160,15 +163,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card">
+                            <div class="card mb-3">
                                 <div class="card-header">
-                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudaccordion-queues">Queues</a>
+                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudaccordion-queues"><i class="ti-angle-right"></i> Queues</a>
                                 </div>
-                                <div id="purecloudaccordion-queues" class="collapse show" data-parent="#purecloudaccordion">
+                                <div id="purecloudaccordion-queues" class="collapse" data-parent="#purecloudaccordion">
                                     <div class="card-body">
                                         <button id="select-all-queues" class="btn button-default mr-2">Select/Deselect All</button>
                                         <button id="select-invert-queues" class="btn button-default mr-2">Invert Selection</button>
-                                        <button id="delete-queues" disabled type="button" class="btn btn-danger">Delete Selected Queues</button>
+                                        <button id="delete-queues" disabled type="button" class="btn btn-danger"><i class="ti-trash"></i> Delete Selected Queues</button>
                                         <table class="table table-striped table-hover table-sm">
                                             <thead>
                                                 <tr>
@@ -187,15 +190,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card">
+                            <div class="card mb-3">
                                 <div class="card-header">
-                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudaccordion-skills">Skills</a>
+                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudaccordion-skills"><i class="ti-angle-right"></i> Skills</a>
                                 </div>
-                                <div id="purecloudaccordion-skills" class="collapse show" data-parent="#purecloudaccordion">
+                                <div id="purecloudaccordion-skills" class="collapse" data-parent="#purecloudaccordion">
                                     <div class="card-body">
                                         <button id="select-all-skills" class="btn button-default mr-2">Select/Deselect All</button>
                                         <button id="select-invert-skills" class="btn button-default mr-2">Invert Selection</button>
-                                        <button id="delete-skills" disabled type="button" class="btn btn-danger">Delete Selected Skills</button>
+                                        <button id="delete-skills" disabled type="button" class="btn btn-danger"><i class="ti-trash"></i> Delete Selected Skills</button>
                                         <table class="table table-striped table-hover table-sm">
                                             <thead>
                                                 <tr>
@@ -207,6 +210,141 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="skills">
+                                            </tbody>
+                                        </table>
+                                        <div class="mt-5">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="card mb-3">
+                                <div class="card-header">
+                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudaccordion-flows"><i class="ti-angle-right"></i> Flows (N/A)</a>
+                                </div>
+                                <div id="purecloudaccordion-flows" class="collapse" data-parent="#purecloudaccordion">
+                                    <div class="card-body">
+                                        <button id="select-all-flows" class="btn button-default mr-2">Select/Deselect All</button>
+                                        <button id="select-invert-flows" class="btn button-default mr-2">Invert Selection</button>
+                                        <button id="delete-flows" disabled type="button" class="btn btn-danger"><i class="ti-trash"></i> Delete Selected Flows</button>
+                                        <table class="table table-striped table-hover table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th class="active">
+                                                        <input type="checkbox" class="select-all-flows checkbox" name="select-all-flows" />
+                                                    </th>
+                                                    <th class="success">Id</th>
+                                                    <th class="warning">Name</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="flows">
+                                            </tbody>
+                                        </table>
+                                        <div class="mt-5">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudaccordion-presenceDefinitions"><i class="ti-angle-right"></i> Custom Presence Definitions (Custom Statuses)</a>
+                                </div>
+                                <div id="purecloudaccordion-presenceDefinitions" class="collapse" data-parent="#purecloudaccordion">
+                                    <div class="card-body">
+                                        <button id="select-all-presenceDefinitions" class="btn button-default mr-2">Select/Deselect All</button>
+                                        <button id="select-invert-presenceDefinitions" class="btn button-default mr-2">Invert Selection</button>
+                                        <button id="delete-presenceDefinitions" disabled type="button" class="btn btn-danger"><i class="ti-trash"></i> Delete Selected Presence Definitions</button>
+                                        <table class="table table-striped table-hover table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th class="active">
+                                                        <input type="checkbox" class="select-all-presenceDefinitions checkbox" name="select-all-presenceDefinitions" />
+                                                    </th>
+                                                    <th class="success">Id</th>
+                                                    <th class="warning">Name</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="presenceDefinitions">
+                                            </tbody>
+                                        </table>
+                                        <div class="mt-5">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudaccordion-wrapupcodes"><i class="ti-angle-right"></i> Wrap Up Codes</a>
+                                </div>
+                                <div id="purecloudaccordion-wrapupcodes" class="collapse" data-parent="#purecloudaccordion">
+                                    <div class="card-body">
+                                        <button id="select-all-wrapupcodes" class="btn button-default mr-2">Select/Deselect All</button>
+                                        <button id="select-invert-wrapupcodes" class="btn button-default mr-2">Invert Selection</button>
+                                        <button id="delete-wrapupcodes" disabled type="button" class="btn btn-danger"><i class="ti-trash"></i> Delete Selected Presence Definitions</button>
+                                        <table class="table table-striped table-hover table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th class="active">
+                                                        <input type="checkbox" class="select-all-wrapupcodes checkbox" name="select-all-wrapupcodes" />
+                                                    </th>
+                                                    <th class="success">Id</th>
+                                                    <th class="warning">Name</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="wrapupcodes">
+                                            </tbody>
+                                        </table>
+                                        <div class="mt-5">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudaccordion-outboundCampaigns"><i class="ti-angle-right"></i> Outbound Campaigns</a>
+                                </div>
+                                <div id="purecloudaccordion-outboundCampaigns" class="collapse" data-parent="#purecloudaccordion">
+                                    <div class="card-body">
+                                        <button id="select-all-outboundCampaigns" class="btn button-default mr-2">Select/Deselect All</button>
+                                        <button id="select-invert-outboundCampaigns" class="btn button-default mr-2">Invert Selection</button>
+                                        <button id="delete-outboundCampaigns" disabled type="button" class="btn btn-danger"><i class="ti-trash"></i> Delete Selected Presence Definitions</button>
+                                        <table class="table table-striped table-hover table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th class="active">
+                                                        <input type="checkbox" class="select-all-outboundCampaigns checkbox" name="select-all-outboundCampaigns" />
+                                                    </th>
+                                                    <th class="success">Id</th>
+                                                    <th class="warning">Name</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="outboundCampaigns">
+                                            </tbody>
+                                        </table>
+                                        <div class="mt-5">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudaccordion-scripts"><i class="ti-angle-right"></i> Scripts</a>
+                                </div>
+                                <div id="purecloudaccordion-scripts" class="collapse" data-parent="#purecloudaccordion">
+                                    <div class="card-body">
+                                        <button id="select-all-scripts" class="btn button-default mr-2">Select/Deselect All</button>
+                                        <button id="select-invert-scripts" class="btn button-default mr-2">Invert Selection</button>
+                                        <button id="delete-scripts" disabled type="button" class="btn btn-danger"><i class="ti-trash"></i> Delete Selected Presence Definitions</button>
+                                        <table class="table table-striped table-hover table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th class="active">
+                                                        <input type="checkbox" class="select-all-scripts checkbox" name="select-all-scripts" />
+                                                    </th>
+                                                    <th class="success">Id</th>
+                                                    <th class="warning">Name</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="scripts">
                                             </tbody>
                                         </table>
                                         <div class="mt-5">
@@ -283,6 +421,27 @@
                 console.log("Skills:", skills);
                 populateTable("skills", skills);
             });
+            // getItems("flows").then((flows) => {
+            //     console.log("Flows:", flows);
+            //     populateTable("flows", flows);
+            // });
+            getItems("presenceDefinitions").then((presenceDefinitions) => {
+                console.log("Presence Definitions:", presenceDefinitions);
+                //TODO Remove primary statuses
+                populateTable("presenceDefinitions", presenceDefinitions);
+            });
+            getItems("wrapupcodes").then((wrapupcodes) => {
+                console.log("Wrap Up Codes:", wrapupcodes);
+                populateTable("wrapupcodes", wrapupcodes);
+            });
+            getItems("outboundCampaigns").then((outboundCampaigns) => {
+                console.log("Outbound Campaigns:", outboundCampaigns);
+                populateTable("outboundCampaigns", outboundCampaigns);
+            });
+            getItems("scripts").then((scripts) => {
+                console.log("Scripts:", scripts);
+                populateTable("scripts", scripts);
+            });
         }
 
         function populateTable(tableName, items) {
@@ -299,10 +458,16 @@
                 $("<td />").text(item.id).appendTo(row);
 
                 // Name Column
-                $("<td />").text(item.name).appendTo(row);
+                if (item.hasOwnProperty("name")) {
+                    $("<td />").text(item.name).appendTo(row);
+                } else if (item.hasOwnProperty("systemPresence")) {
+                    $("<td />").text(`${item.systemPresence} (${item.languageLabels.en_US})`).appendTo(row);
+                }
 
                 // Email Address Column
-                $("<td />").text(item.email).appendTo(row);
+                if (item.hasOwnProperty("email")) {
+                    $("<td />").text(item.email).appendTo(row);
+                }
             });
 
             //check selected items
@@ -382,7 +547,7 @@
             console.log("Selected Users:", selectedItems);
             deleteItems("users", selectedItems).then((response) => {
                 console.log("Delete response:", response);
-                showMessage(`${response.count} user(s) deleted`);
+                showMessage("User(s) deleted");
                 deselectAllItems("users"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("users");
@@ -426,7 +591,7 @@
             console.log("Selected queues:", selectedItems);
             deleteItems("queues", selectedItems).then((response) => {
                 console.log("Delete response:", response);
-                showMessage(`${response.count} queue(s) deleted`);
+                showMessage("Queue(s) deleted");
                 deselectAllItems("queues"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("queues");
@@ -470,10 +635,230 @@
             console.log("Selected skills:", selectedItems);
             deleteItems("skills", selectedItems).then((response) => {
                 console.log("Delete response:", response);
-                showMessage(`${response.count} skill(s) deleted`);
+                showMessage("Skill(s) deleted");
                 deselectAllItems("skills"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("skills");
+            });
+        });
+
+        //#endregion
+
+        //#region Flows
+
+        // Button select/deselect all
+        $("#select-all-flows").click(function () {
+            var all = $("input.select-all-flows")[0];
+            all.checked = !all.checked
+            var checked = all.checked;
+            $("input.select-item-flows").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-flows", "input.select-item-flows");
+        });
+
+        //button select invert
+        $("#select-invert-flows").click(function () {
+            $("input.select-item-flows").each(function (index, item) {
+                item.checked = !item.checked;
+            });
+            checkSelectedItems("flows");
+        });
+
+        //column checkbox select all or cancel
+        $("input.select-all-flows").click(function () {
+            var checked = this.checked;
+            $("input.select-item-flows").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-flows", "input.select-item-flows");
+        });
+
+        $("#delete-flows").click(() => {
+            var selectedItems = getSelectedItems("flows");
+            console.log("Selected flows:", selectedItems);
+            deleteItems("flows", selectedItems).then((response) => {
+                console.log("Delete response:", response);
+                showMessage("Flow(s) deleted");
+                deselectAllItems("flows"); //Otherwise, they will still count as selected after refresh
+                loadObjects();
+                checkSelectedItems("flows");
+            });
+        });
+
+        //#endregion
+
+        //#region Presence Definitions
+
+        // Button select/deselect all
+        $("#select-all-presenceDefinitions").click(function () {
+            var all = $("input.select-all-presenceDefinitions")[0];
+            all.checked = !all.checked
+            var checked = all.checked;
+            $("input.select-item-presenceDefinitions").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-presenceDefinitions", "input.select-item-presenceDefinitions");
+        });
+
+        //button select invert
+        $("#select-invert-presenceDefinitions").click(function () {
+            $("input.select-item-presenceDefinitions").each(function (index, item) {
+                item.checked = !item.checked;
+            });
+            checkSelectedItems("presenceDefinitions");
+        });
+
+        //column checkbox select all or cancel
+        $("input.select-all-presenceDefinitions").click(function () {
+            var checked = this.checked;
+            $("input.select-item-presenceDefinitions").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-presenceDefinitions", "input.select-item-presenceDefinitions");
+        });
+
+        $("#delete-presenceDefinitions").click(() => {
+            var selectedItems = getSelectedItems("presenceDefinitions");
+            console.log("Selected presenceDefinitions:", selectedItems);
+            deleteItems("presenceDefinitions", selectedItems).then((response) => {
+                console.log("Delete response:", response);
+                showMessage("Presence Definition(s) deleted");
+                deselectAllItems("presenceDefinitions"); //Otherwise, they will still count as selected after refresh
+                loadObjects();
+                checkSelectedItems("presenceDefinitions");
+            });
+        });
+
+        //#endregion
+
+        //#region WrapUp Codes
+
+        // Button select/deselect all
+        $("#select-all-wrapupcodes").click(function () {
+            var all = $("input.select-all-wrapupcodes")[0];
+            all.checked = !all.checked
+            var checked = all.checked;
+            $("input.select-item-wrapupcodes").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-wrapupcodes", "input.select-item-wrapupcodes");
+        });
+
+        //button select invert
+        $("#select-invert-wrapupcodes").click(function () {
+            $("input.select-item-wrapupcodes").each(function (index, item) {
+                item.checked = !item.checked;
+            });
+            checkSelectedItems("wrapupcodes");
+        });
+
+        //column checkbox select all or cancel
+        $("input.select-all-wrapupcodes").click(function () {
+            var checked = this.checked;
+            $("input.select-item-wrapupcodes").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-wrapupcodes", "input.select-item-wrapupcodes");
+        });
+
+        $("#delete-wrapupcodes").click(() => {
+            var selectedItems = getSelectedItems("wrapupcodes");
+            console.log("Selected wrapupcodes:", selectedItems);
+            deleteItems("wrapupcodes", selectedItems).then((response) => {
+                console.log("Delete response:", response);
+                showMessage("Wrap Up Code(s) deleted");
+                deselectAllItems("wrapupcodes"); //Otherwise, they will still count as selected after refresh
+                loadObjects();
+                checkSelectedItems("wrapupcodes");
+            });
+        });
+
+        //#endregion
+
+        //#region Outbound Campaigns
+
+        // Button select/deselect all
+        $("#select-all-outboundCampaigns").click(function () {
+            var all = $("input.select-all-outboundCampaigns")[0];
+            all.checked = !all.checked
+            var checked = all.checked;
+            $("input.select-item-outboundCampaigns").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-outboundCampaigns", "input.select-item-outboundCampaigns");
+        });
+
+        //button select invert
+        $("#select-invert-outboundCampaigns").click(function () {
+            $("input.select-item-outboundCampaigns").each(function (index, item) {
+                item.checked = !item.checked;
+            });
+            checkSelectedItems("outboundCampaigns");
+        });
+
+        //column checkbox select all or cancel
+        $("input.select-all-outboundCampaigns").click(function () {
+            var checked = this.checked;
+            $("input.select-item-outboundCampaigns").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-outboundCampaigns", "input.select-item-outboundCampaigns");
+        });
+
+        $("#delete-outboundCampaigns").click(() => {
+            var selectedItems = getSelectedItems("outboundCampaigns");
+            console.log("Selected outboundCampaigns:", selectedItems);
+            deleteItems("outboundCampaigns", selectedItems).then((response) => {
+                console.log("Delete response:", response);
+                showMessage("Outbound Campaign(s) deleted");
+                deselectAllItems("outboundCampaigns"); //Otherwise, they will still count as selected after refresh
+                loadObjects();
+                checkSelectedItems("outboundCampaigns");
+            });
+        });
+
+        //#endregion
+
+        //#region Scripts
+
+        // Button select/deselect all
+        $("#select-all-scripts").click(function () {
+            var all = $("input.select-all-scripts")[0];
+            all.checked = !all.checked
+            var checked = all.checked;
+            $("input.select-item-scripts").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-scripts", "input.select-item-scripts");
+        });
+
+        //button select invert
+        $("#select-invert-scripts").click(function () {
+            $("input.select-item-scripts").each(function (index, item) {
+                item.checked = !item.checked;
+            });
+            checkSelectedItems("scripts");
+        });
+
+        //column checkbox select all or cancel
+        $("input.select-all-scripts").click(function () {
+            var checked = this.checked;
+            $("input.select-item-scripts").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-scripts", "input.select-item-scripts");
+        });
+
+        $("#delete-scripts").click(() => {
+            var selectedItems = getSelectedItems("scripts");
+            console.log("Selected scripts:", selectedItems);
+            deleteItems("scripts", selectedItems).then((response) => {
+                console.log("Delete response:", response);
+                showMessage("Script(s) deleted");
+                deselectAllItems("scripts"); //Otherwise, they will still count as selected after refresh
+                loadObjects();
+                checkSelectedItems("scripts");
             });
         });
 

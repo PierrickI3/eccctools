@@ -1,5 +1,6 @@
 const baseUrl = " https://qi8gcyskj4.execute-api.eu-west-1.amazonaws.com/DEV";
 const tokenUrl = baseUrl + "/token";
+const actionUrl = baseUrl + "/action";
 
 const apiKey = "CovgPVCcHJ60ZGtdGCdMqaCC28qKVW0M1MYm2Qhs";
 
@@ -29,7 +30,8 @@ function connectToPureCloud(clientId, clientSecret, environment) {
           reject(JSON.stringify(data.errorMessage));
         } else if (data.hasOwnProperty("token")) {
           pureCloudToken = data.token;
-          resolve(data.token);
+          console.log("Token:", pureCloudToken)
+          resolve(pureCloudToken);
         } else {
           console.error("Unknown response:", data);
         }
@@ -46,13 +48,13 @@ function connectToPureCloud(clientId, clientSecret, environment) {
   });
 }
 
-//#region Users
+//#region Itens (users, queues, flows, etc.)
 
 function getItems(type) {
   return new Promise((resolve, reject) => {
     try {
       $.ajax({
-        url: baseUrl + "/" + type,
+        url: actionUrl,
         method: "POST",
         beforeSend: function (xhr) {
           xhr.setRequestHeader("Content-Type", "application/json");
@@ -60,7 +62,9 @@ function getItems(type) {
         },
         data: JSON.stringify({
           env: pureCloudEnvironment,
-          token: pureCloudToken
+          token: pureCloudToken,
+          objectType: type,
+          actionType: "GET"
         })
       }).done((data) => {
         if (data.hasOwnProperty("errorMessage")) {
@@ -88,8 +92,8 @@ function deleteItems(type, items) {
   return new Promise((resolve, reject) => {
     try {
       $.ajax({
-        url: baseUrl + "/" + type,
-        method: "DELETE",
+        url: actionUrl,
+        method: "POST",
         beforeSend: function (xhr) {
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.setRequestHeader("x-api-key", apiKey);
@@ -97,6 +101,8 @@ function deleteItems(type, items) {
         data: JSON.stringify({
           env: pureCloudEnvironment,
           token: pureCloudToken,
+          objectType: type,
+          actionType: "DELETE",
           items: items
         })
       }).done((data) => {
