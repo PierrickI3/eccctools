@@ -445,6 +445,34 @@
                                     </div>
                                 </div> -->
                             </div>
+                            <!-- Data Actions -->
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <a class="btn btn-link" data-toggle="collapse" href="#purecloudaccordion-dataactions"><i class="ti-angle-right"></i> Published Data Actions</a>
+                                </div>
+                                <div id="purecloudaccordion-dataactions" class="collapse" data-parent="#purecloudaccordion">
+                                    <div class="card-body">
+                                        <button id="select-all-dataactions" class="btn button-default mr-2">Select/Deselect All</button>
+                                        <button id="select-invert-dataactions" class="btn button-default mr-2">Invert Selection</button>
+                                        <button id="delete-dataactions" disabled type="button" class="btn btn-danger"><i class="ti-trash"></i> Delete Selected Data Actions</button>
+                                        <table class="table table-striped table-hover table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th class="active">
+                                                        <input type="checkbox" class="select-all-dataactions checkbox" name="select-all-dataactions" />
+                                                    </th>
+                                                    <th class="success">Id</th>
+                                                    <th class="warning">Name</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="dataactions">
+                                            </tbody>
+                                        </table>
+                                        <div class="mt-5">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -551,6 +579,10 @@
             //     console.log("Divisions:", divisions);
             //     populateTable("divisions", divisions);
             // });
+            getItems("dataactions").then((dataactions) => {
+                console.log("Data Actions:", dataactions);
+                populateTable("dataactions", dataactions);
+            });
         }
 
         function populateTable(tableName, items) {
@@ -1012,6 +1044,50 @@
                 deselectAllItems("webChatDeployments"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("webChatDeployments");
+            });
+        });
+
+        //#endregion
+
+        //#region Data Actions
+
+        // Button select/deselect all
+        $("#select-all-dataactions").click(function () {
+            var all = $("input.select-all-dataactions")[0];
+            all.checked = !all.checked
+            var checked = all.checked;
+            $("input.select-item-dataactions").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-dataactions", "input.select-item-dataactions");
+        });
+
+        //button select invert
+        $("#select-invert-dataactions").click(function () {
+            $("input.select-item-dataactions").each(function (index, item) {
+                item.checked = !item.checked;
+            });
+            checkSelectedItems("dataactions");
+        });
+
+        //column checkbox select all or cancel
+        $("input.select-all-dataactions").click(function () {
+            var checked = this.checked;
+            $("input.select-item-dataactions").each(function (index, item) {
+                item.checked = checked;
+            });
+            updateButtonStatus("#delete-dataactions", "input.select-item-dataactions");
+        });
+
+        $("#delete-dataactions").click(() => {
+            var selectedItems = getSelectedItems("dataactions");
+            console.log("Selected dataactions:", selectedItems);
+            deleteItems("dataactions", selectedItems).then((response) => {
+                console.log("Delete response:", response);
+                showMessage("Data Action(s) deleted");
+                deselectAllItems("dataactions"); //Otherwise, they will still count as selected after refresh
+                loadObjects();
+                checkSelectedItems("dataactions");
             });
         });
 
