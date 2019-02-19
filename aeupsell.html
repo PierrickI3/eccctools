@@ -49,7 +49,7 @@
                                 <a href="javascript:void(0)" aria-expanded="true"><i class="ti-desktop"></i><span>PureCloud Utilities</span></a>
                                 <ul class="collapse">
                                     <li><a href="pureclean.html">PureClean</a></li>
-                                    <li class="active"><a href="aeupsell.html">AE Upsell</a></li>
+                                    <li class="active bg-secondary"><a href="aeupsell.html">AE Upsell</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -127,7 +127,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="startDate">Start Date</label><small> (limited to the past 7 days)</small>
+                                <label for="startDate">Start Date</label>
                                 <input data-provide="datepicker" required class="form-control" name="startDate" id="startDate">
                             </div>
                             <div class="form-group">
@@ -216,7 +216,6 @@
         // Initialize DatePicker control (https://bootstrap-datepicker.readthedocs.io/en/latest/)
         $("#startDate").datepicker({
             format: "yyyy/mm/dd",
-            startDate: "-6d",     // Limit to today and the last 6 days
             endDate: "+0d",       // No future dates
             autoclose: true,      // Close after selecting date
             weekStart: 1          // weeks start on Mondays

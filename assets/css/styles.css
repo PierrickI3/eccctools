@@ -8,10 +8,10 @@
     Version: 1.0
 
 ----------------------------------------------
-    
+
     CSS INDEX
     ===================
-  
+
     1. Core Css
     2. Dashboard One
         2.1 Sidebar Menu
@@ -544,7 +544,6 @@
 }
 
 .notify-title a {
-    float: right;
     display: inline-block;
     color: #ffee1d;
     font-size: 13px;
@@ -1263,8 +1262,6 @@ table.dbkit-table tr td {
     color: #e1e1e1;
 }
 
-.member-box .media-body {}
-
 .member-box .media-body p {
     font-size: 18px;
     font-weight: 500;
@@ -1494,29 +1491,6 @@ table.dbkit-table tr td {
     left: -20px;
     z-index: 1;
     opacity: 0;
-}
-
-@-webkit-keyframes "pulse" {
-    0% {
-        -webkit-transform: scale(0);
-        opacity: 0.0;
-    }
-    25% {
-        -webkit-transform: scale(0);
-        opacity: 0.1;
-    }
-    50% {
-        -webkit-transform: scale(0.1);
-        opacity: 0.3;
-    }
-    75% {
-        -webkit-transform: scale(0.5);
-        opacity: 0.5;
-    }
-    100% {
-        -webkit-transform: scale(1);
-        opacity: 0.0;
-    }
 }
 
 .testimonial-carousel {
@@ -1985,8 +1959,6 @@ label {
 
 /*-------------------- 18. Icons ------------------- */
 
-.fw-icons {}
-
 .fw-icons a {
     color: #444;
     margin: 9px 0;
@@ -2208,8 +2180,6 @@ table.dataTable thead td {
 
 /*-------------------- 22. Invoice ------------------- */
 
-.invoice-area {}
-
 .invoice-head {
     margin-bottom: 30px;
     border-bottom: 1px solid #efebeb;
@@ -2250,8 +2220,6 @@ table.dataTable thead td {
     font-weight: 700;
     margin-bottom: 5px;
 }
-
-.invoice-table {}
 
 .invoice-table .table-bordered td,
 .invoice-table .table-bordered th {

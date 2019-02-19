@@ -66,6 +66,9 @@ function loadCharts(taskId) {
     loadChart("Salesforce CRM Web Client Connections (Daily)", "Number of connections to the Salesforce CRM Web Client", data, "crm-web-client-salesforce", "bar");
   }).catch((err) => {
     console.error(err);
+    if (err.length == 0) {
+      showMessage("No data found for this task. Please wait for a few mins and click on Refresh", true);
+    }
   });
 
 }

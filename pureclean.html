@@ -47,7 +47,7 @@
                             <li class="active">
                                 <a href="javascript:void(0)" aria-expanded="true"><i class="ti-desktop"></i><span>PureCloud Utilities</span></a>
                                 <ul class="collapse">
-                                    <li class="active"><a href="pureclean.html">PureClean</a></li>
+                                    <li class="active bg-secondary"><a href="pureclean.html">PureClean</a></li>
                                     <li><a href="aeupsell.html">AE Upsell</a></li>
                                 </ul>
                             </li>
@@ -129,7 +129,7 @@
                             <div>
                                 <div id="error"><span class="text-danger"></span></div>
                                 <div id="success"><span class="text-success"></span></div>
-                                <button id="connect" type="button" class="btn btn-primary"><i class="ti-unlock"></i> Connect</button>
+                                <button id="connect" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing Request" class="btn btn-primary"><i class="ti-unlock"></i> Connect</button>
                             </div>
                         </form>
                     </div>
@@ -515,6 +515,19 @@
 
     <script>
 
+        var setLoading = function (button) {
+            var search = $(button);
+            if (!search.data('normal-text')) {
+                search.data('normal-text', search.html());
+            }
+            search.html(search.data('loading-text'));
+        };
+
+        var clearLoading = function (button) {
+            var search = $(button);
+            search.html(search.data('normal-text'));
+        };
+
         // Init
         $("#pureCloudObjects").hide();
 
@@ -541,6 +554,8 @@
 
             if ($("#connectionform").valid()) {
 
+                setLoading("#connect"); // Stop showing spinner on Connect button
+
                 // Clear errors
                 $("#connectionform #error span").html("");
                 $("#connectionform #error").hide();
@@ -557,6 +572,7 @@
                     }).catch((error) => {
                         console.error(error);
                         showMessage(error, true);
+                        clearLoading("#connect"); // Stop showing spinner on Connect button
                     });
             }
         });
@@ -568,56 +584,62 @@
         });
 
         function loadObjects() {
-            // Load Users
-            getItems("users").then((users) => {
-                console.log("Users:", users);
-                populateTable("users", users);
-            });
-            getItems("queues").then((queues) => {
-                console.log("Queues:", queues);
-                populateTable("queues", queues);
-            });
-            getItems("skills").then((skills) => {
-                console.log("Skills:", skills);
-                populateTable("skills", skills);
-            });
-            // getItems("flows").then((flows) => {
-            //     console.log("Flows:", flows);
-            //     populateTable("flows", flows);
-            // });
-            getItems("presenceDefinitions").then((presenceDefinitions) => {
-                console.log("Presence Definitions:", presenceDefinitions);
-                //TODO Remove primary statuses
-                populateTable("presenceDefinitions", presenceDefinitions);
-            });
-            getItems("wrapupcodes").then((wrapupcodes) => {
-                console.log("Wrap Up Codes:", wrapupcodes);
-                populateTable("wrapupcodes", wrapupcodes);
-            });
-            getItems("outboundCampaigns").then((outboundCampaigns) => {
-                console.log("Outbound Campaigns:", outboundCampaigns);
-                populateTable("outboundCampaigns", outboundCampaigns);
-            });
-            getItems("scripts").then((scripts) => {
-                console.log("Scripts:", scripts);
-                populateTable("scripts", scripts);
-            });
-            getItems("webChatDeployments").then((webChatDeployments) => {
-                console.log("Web Chat Deployments:", webChatDeployments);
-                populateTable("webChatDeployments", webChatDeployments);
-            });
-            // getItems("recordings").then((flows) => {
-            //     console.log("Recordings:", recordings);
-            //     populateTable("recordings", recordings);
-            // });
-            // getItems("divisions").then((flows) => {
-            //     console.log("Divisions:", divisions);
-            //     populateTable("divisions", divisions);
-            // });
-            getItems("dataactions").then((dataactions) => {
-                console.log("Data Actions:", dataactions);
-                populateTable("dataactions", dataactions);
-            });
+            try {
+                // Load Users
+                getItems("users").then((users) => {
+                    console.log("Users:", users);
+                    populateTable("users", users);
+                });
+                getItems("queues").then((queues) => {
+                    console.log("Queues:", queues);
+                    populateTable("queues", queues);
+                });
+                getItems("skills").then((skills) => {
+                    console.log("Skills:", skills);
+                    populateTable("skills", skills);
+                });
+                // getItems("flows").then((flows) => {
+                //     console.log("Flows:", flows);
+                //     populateTable("flows", flows);
+                // });
+                getItems("presenceDefinitions").then((presenceDefinitions) => {
+                    console.log("Presence Definitions:", presenceDefinitions);
+                    //TODO Remove primary statuses
+                    populateTable("presenceDefinitions", presenceDefinitions);
+                });
+                getItems("wrapupcodes").then((wrapupcodes) => {
+                    console.log("Wrap Up Codes:", wrapupcodes);
+                    populateTable("wrapupcodes", wrapupcodes);
+                });
+                getItems("outboundCampaigns").then((outboundCampaigns) => {
+                    console.log("Outbound Campaigns:", outboundCampaigns);
+                    populateTable("outboundCampaigns", outboundCampaigns);
+                });
+                getItems("scripts").then((scripts) => {
+                    console.log("Scripts:", scripts);
+                    populateTable("scripts", scripts);
+                });
+                getItems("webChatDeployments").then((webChatDeployments) => {
+                    console.log("Web Chat Deployments:", webChatDeployments);
+                    populateTable("webChatDeployments", webChatDeployments);
+                });
+                // getItems("recordings").then((flows) => {
+                //     console.log("Recordings:", recordings);
+                //     populateTable("recordings", recordings);
+                // });
+                // getItems("divisions").then((flows) => {
+                //     console.log("Divisions:", divisions);
+                //     populateTable("divisions", divisions);
+                // });
+                getItems("dataactions").then((dataactions) => {
+                    console.log("Data Actions:", dataactions);
+                    populateTable("dataactions", dataactions);
+                });
+            } catch (error) {
+                console.error(error);
+            } finally {
+                clearLoading("#connect"); // Stop showing spinner on Connect button
+            }
         }
 
         function populateTable(tableName, items) {
