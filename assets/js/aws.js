@@ -1,14 +1,19 @@
+const apiKey = "CovgPVCcHJ60ZGtdGCdMqaCC28qKVW0M1MYm2Qhs";
+
 const baseUrl = " https://qi8gcyskj4.execute-api.eu-west-1.amazonaws.com/DEV";
 const tokenUrl = baseUrl + "/token";
 const actionUrl = baseUrl + "/action";
 
-const apiKey = "CovgPVCcHJ60ZGtdGCdMqaCC28qKVW0M1MYm2Qhs";
+const aebaseurl = "https://rco60s22e3.execute-api.eu-west-1.amazonaws.com/DEV";
+const requestUrl = aebaseurl + "/request";
+
+const stateMachineArn = "arn:aws:states:eu-west-1:715662236651:stateMachine:upsell-startProcess";
 
 var pureCloudToken = undefined;
 var pureCloudEnvironment = undefined;
 
 function connectToPureCloud(clientId, clientSecret, environment) {
-  console.log(`Connecting to PureCloud... Client Id: ${clientId}, Client Secret: ${clientSecret}, environment: ${environment}`);
+  console.log(`Connecting to PureCloud... Client Id: ${clientId}, environment: ${environment}`);
   pureCloudEnvironment = environment;
   return new Promise((resolve, reject) => {
     try {
@@ -48,7 +53,84 @@ function connectToPureCloud(clientId, clientSecret, environment) {
   });
 }
 
-//#region Itens (users, queues, flows, etc.)
+//#region AE Upsell
+
+function submitRequest(clientId, clientSecret, environment, startDate, duration, emailAddress, taskId) {
+  console.log("Submitting Request...");
+  return new Promise(function (resolve, reject) {
+    try {
+
+      var options = {
+        "async": true,
+        "crossDomain": true,
+        "url": requestUrl,
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey
+        },
+        "processData": false,
+        "data": `{ \"input\": \"{ \\\"name\\\": \\\"${taskId}\\\", \\\"clientId\\\" : \\\"${clientId}\\\", \\\"clientSecret\\\" : \\\"${clientSecret}\\\",\\\"env\\\" : \\\"${environment}\\\" , \\\"startDate\\\": \\\"${startDate}\\\", \\\"duration\\\": ${duration} }\", \"name\": \"${taskId}\", \"stateMachineArn\": \"${stateMachineArn}\"}`
+      }
+
+      console.log(options);
+
+      $.ajax(options).done((response) => {
+        console.log(response);
+        if (response.hasOwnProperty("errorMessage")) {
+          reject(response);
+          return;
+        }
+        resolve(response.token);
+      }).fail((jqXHR, textStatus, errorThrown) => {
+        console.error(jqXHR);
+        console.error(textStatus);
+        reject(errorThrown);
+      });
+    } catch (error) {
+      console.error(error);
+      reject(error);
+    }
+  });
+}
+
+function getRequestData(taskId) {
+  console.log(`Getting Request (${taskId})...`);
+  return new Promise(function (resolve, reject) {
+    try {
+
+      var options = {
+        "async": true,
+        "crossDomain": true,
+        "url": `${requestUrl}?name=${taskId}`,
+        "method": "GET",
+        "headers": {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey
+        },
+        "processData": false
+      }
+
+      console.log(options);
+
+      $.ajax(options).done((response) => {
+        console.log(response);
+        resolve(response);
+      }).fail((jqXHR, textStatus, errorThrown) => {
+        console.error(jqXHR);
+        console.error(textStatus);
+        reject(errorThrown);
+      });
+    } catch (error) {
+      console.error(error);
+      reject(error);
+    }
+  });
+}
+
+//#endregion
+
+//#region PureClean
 
 function getItems(type) {
   return new Promise((resolve, reject) => {

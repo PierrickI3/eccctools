@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="assets/css/default-css.css">
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-datepicker3.standalone.min.css">
     <!-- modernizr css -->
     <script src="assets/js/vendor/modernizr-2.8.3.min.js"></script>
 </head>
@@ -47,7 +48,8 @@
                             <li class="active">
                                 <a href="javascript:void(0)" aria-expanded="true"><i class="ti-desktop"></i><span>PureCloud Utilities</span></a>
                                 <ul class="collapse">
-                                    <li class="active"><a href="index.html">PureClean</a></li>
+                                    <li><a href="index.html">PureClean</a></li>
+                                    <li class="active"><a href="aeupsell.html">AE Upsell</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -84,10 +86,10 @@
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <div class="breadcrumbs-area clearfix">
-                            <h4 class="page-title pull-left">PureClean</h4>
+                            <h4 class="page-title pull-left">AE Upsell</h4>
                             <ul class="breadcrumbs pull-left">
                                 <li><a href="index.html">Home</a></li>
-                                <li><span class="active">PureClean</span></li>
+                                <li><span class="active">AE Upsell</span></li>
                             </ul>
                         </div>
                     </div>
@@ -97,9 +99,8 @@
             <div class="main-content-inner">
                 <div class="mt-5 mb-5 card card-bordered">
                     <div class="card-body text-center">
-                        <p>Clean any of your PureCloud organizations by selecting users/queues/flows/etc. and deleting them.</p>
-                        <p>Useful if you run trials from your dev orgs</p>
-                        <p><i>Flows are not yet available as it requires more work</i></p>
+                        <p>Get insightful statistics about any PureCloud organization</p>
+                        <p>Useful to check if PureCloud customers are using specific features or functionalities</p>
                     </div>
                 </div>
                 <div class="mt-5 mb-5 card card-bordered">
@@ -108,11 +109,11 @@
                         <small class="form-text text-muted">Populate all fields below then click on <code>Connect</code></small><br />
                         <div class="form-group">
                             <label for="clientId">Client Id</label>
-                            <input type="text" class="form-control" id="clientId" placeholder="Enter your client id">
+                            <input type="text" class="form-control" id="clientId" placeholder="Enter your client id" value="489d03cb-e7c5-4f62-8fdb-b391d9b70ce6">
                         </div>
                         <div class="form-group">
                             <label for="clientSecret">Client Secret</label>
-                            <input type="password" class="form-control" id="clientSecret" placeholder="Enter your client secret">
+                            <input type="password" class="form-control" id="clientSecret" placeholder="Enter your client secret" value="cvlV1EAkNZGTM6WavqIRhCOKMowmyGp6qEZciW0bTcs">
                         </div>
                         <div class="form-group">
                             <label for="environment">PureCloud Environment</label>
@@ -124,10 +125,22 @@
                                 <option value="mypurecloud.jp">mypurecloud.jp (Japan)</option>
                             </select>
                         </div>
-                        <div>
-                            <button id="connect" type="button" class="btn btn-primary"><i class="ti-unlock"></i> Connect</button>
+                        <div class="form-group">
+                            <label for="startDate">Start Date</label><small> (limited to the past 7 days)</small>
+                            <input data-provide="datepicker" class="form-control" id="startDate" value="2">
                         </div>
-
+                        <div class="form-group">
+                            <label for="duration">Duration</label><small> (max = 7 days)</small>
+                            <input type="number" class="form-control" min="1" max="7" id="duration" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="emailAddress">Email Address</label>
+                            <input type="email" class="form-control" id="emailAddress" placeholder="Enter your email address so we can let you know when the report is ready">
+                        </div>
+                        <div class="float-right">
+                            <button id="testConnection" type="button" class="btn btn-info">Test Connection</button>
+                            <button id="submitRequest" disabled type="submit" class="btn btn-primary">Submit Request</button>
+                        </div>
                     </div>
                 </div>
                 <div class="mt-5 mb-5 card card-bordered" id="pureCloudObjects">
@@ -488,8 +501,10 @@
         <!-- footer area end-->
     </div>
     <!-- page container area end -->
+
     <!-- jquery latest version -->
     <script src="assets/js/vendor/jquery-2.2.4.min.js"></script>
+
     <!-- bootstrap 4 js -->
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
@@ -500,597 +515,87 @@
 
     <!-- jQuery Toast -->
     <script src="assets/js/jquery.toast.min.js"></script>
+
     <!-- others plugins -->
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/scripts.js"></script>
+    <script src="assets/js/bootstrap-datepicker.min.js"></script>
+
     <!-- This page's scripts -->
     <script src="assets/js/aws.js"></script>
     <script src="assets/js/notifications.js"></script>
+    <script src="assets/js/mail.js"></script>
 
     <script>
 
         // Init
         $("#pureCloudObjects").hide();
 
-        // Connect to PureCloud Button
-        $("#connect").click(() => {
-            connectToPureCloud($("#clientId").val(), $("#clientSecret").val(), $("#environment").children("option:selected").val())
+        // Initialize DatePicker control (https://bootstrap-datepicker.readthedocs.io/en/latest/)
+        $("#startDate").datepicker({
+            format: "yyyy/mm/dd",
+            startDate: "-6d",     // Limit to today and the last 6 days
+            endDate: "+0d",       // No future dates
+            autoclose: true,      // Close after selecting date
+            weekStart: 1          // weeks start on Mondays
+        });
+
+        // Generate a UUID
+        function uuidv4() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Submit Request
+        $("#submitRequest").click(() => {
+            var clientId = $("#clientId").val();
+            var clientSecret = $("#clientSecret").val();
+            var environment = $("#environment").children("option:selected").val();
+            var startDate = $("#startDate").val();
+            var duration = $("#duration").val();
+            var emailAddress = $("#emailAddress").val();
+            var uuid = uuidv4();
+
+            if (!emailAddress) {
+                showMessage("Invalid email address", true);
+                return;
+            }
+
+            console.log('Submitting Request...');
+            console.log(`client id: ${clientId}`);
+            console.log(`environment: ${environment}`);
+            console.log(`start date: ${startDate}`);
+            console.log(`duration: ${duration}`);
+            console.log(`email address: ${emailAddress}`);
+            console.log(`task id: ${uuid}`);
+
+            submitRequest(clientId, clientSecret, environment, startDate, duration, emailAddress, uuid)
                 .then((token) => {
-                    $("#pureCloudObjects").show();
-                    showMessage("Please wait while all objects are retrieved...");
-                    loadObjects();
+                    showMessage("Request submitted. Thank you!");
+                    sendEmail(emailAddress, "Your AE Upsell Task", "Thank you for using the AE Upsell tool. When ready, your data will be available here: https://pierricki3.github.io/eccctools/aeupsellrequests.html?taskId=" + uuid).then((response) => {
+                        console.log(response);
+                    }).catch((error) => {
+                        showMessage("Failed to send email", true);
+                    });
                 }).catch((error) => {
-                    console.error(error);
                     showMessage(error, true);
                 });
         });
 
-        //#region Generic functions
-
-        $("#refresh-all").click(function () {
-            loadObjects();
+        // Test PureCloud Connection Button
+        $("#testConnection").click(() => {
+            connectToPureCloud($("#clientId").val(), $("#clientSecret").val(), $("#environment").children("option:selected").val())
+                .then((token) => {
+                    $("#submitRequest").removeAttr("disabled");
+                    showMessage("Click on Submit Request to continue...");
+                }).catch((error) => {
+                    $("#submitRequest").attr("disabled", true);
+                    console.error(error);
+                    showMessage(error, true);
+                });
         });
-
-        function loadObjects() {
-            // Load Users
-            getItems("users").then((users) => {
-                console.log("Users:", users);
-                populateTable("users", users);
-            });
-            getItems("queues").then((queues) => {
-                console.log("Queues:", queues);
-                populateTable("queues", queues);
-            });
-            getItems("skills").then((skills) => {
-                console.log("Skills:", skills);
-                populateTable("skills", skills);
-            });
-            // getItems("flows").then((flows) => {
-            //     console.log("Flows:", flows);
-            //     populateTable("flows", flows);
-            // });
-            getItems("presenceDefinitions").then((presenceDefinitions) => {
-                console.log("Presence Definitions:", presenceDefinitions);
-                //TODO Remove primary statuses
-                populateTable("presenceDefinitions", presenceDefinitions);
-            });
-            getItems("wrapupcodes").then((wrapupcodes) => {
-                console.log("Wrap Up Codes:", wrapupcodes);
-                populateTable("wrapupcodes", wrapupcodes);
-            });
-            getItems("outboundCampaigns").then((outboundCampaigns) => {
-                console.log("Outbound Campaigns:", outboundCampaigns);
-                populateTable("outboundCampaigns", outboundCampaigns);
-            });
-            getItems("scripts").then((scripts) => {
-                console.log("Scripts:", scripts);
-                populateTable("scripts", scripts);
-            });
-            getItems("webChatDeployments").then((webChatDeployments) => {
-                console.log("Web Chat Deployments:", webChatDeployments);
-                populateTable("webChatDeployments", webChatDeployments);
-            });
-            // getItems("recordings").then((flows) => {
-            //     console.log("Recordings:", recordings);
-            //     populateTable("recordings", recordings);
-            // });
-            // getItems("divisions").then((flows) => {
-            //     console.log("Divisions:", divisions);
-            //     populateTable("divisions", divisions);
-            // });
-            getItems("dataactions").then((dataactions) => {
-                console.log("Data Actions:", dataactions);
-                populateTable("dataactions", dataactions);
-            });
-        }
-
-        function populateTable(tableName, items) {
-            $("#" + tableName).empty();
-            $.each(items, (i, item) => {
-                //console.log("Adding", item);
-                var row = $("<tr />").appendTo("#" + tableName);
-
-                // Checkbox
-                var checkItem = $("<td />", { class: "active" }).appendTo(row);
-                $("<input />", { type: "checkbox", class: "select-item-" + tableName + " checkbox", name: "select-item-" + tableName }).val(item.id).appendTo(checkItem);
-
-                // Id Column
-                $("<td />").text(item.id).appendTo(row);
-
-                // Name Column
-                if (item.hasOwnProperty("name")) {
-                    $("<td />").text(item.name).appendTo(row);
-                } else if (item.hasOwnProperty("systemPresence")) {
-                    $("<td />").text(`${item.systemPresence} (${item.languageLabels.en_US})`).appendTo(row);
-                }
-
-                // Email Address Column
-                if (item.hasOwnProperty("email")) {
-                    $("<td />").text(item.email).appendTo(row);
-                }
-            });
-
-            //check selected items
-            $("input.select-item-" + tableName).click(function () {
-                var checked = this.checked;
-                checkSelectedItems(tableName);
-            });
-        }
-
-        function getSelectedItems(type) {
-            var items = [];
-            $("input.select-item-" + type + ":checked:checked").each(function (index, item) {
-                items[index] = item.value;
-            });
-            return items;
-        }
-
-        // Enable/Disable Delete Button
-        function updateButtonStatus(button, itemsControl) {
-            var len = $(itemsControl + ":checked:checked").length;
-            if (len > 0) {
-                $(button).removeAttr("disabled");
-            } else {
-                $(button).attr("disabled", true);
-            }
-        }
-
-        //check is all selected
-        function checkSelectedItems(type) {
-            var all = $("input.select-all-" + type)[0];
-            var total = $("input.select-item-" + type).length;
-            var len = $("input.select-item-" + type + ":checked:checked").length;
-            updateButtonStatus("#delete-" + type, "input.select-item-" + type);
-            console.log("Selected " + type + ": " + len + "/" + total);
-            all.checked = len === total;
-        }
-
-        // Deselect all checkboxes
-        function deselectAllItems(type) {
-            $("input.select-item-" + type).prop("checked", false);
-        }
-
-        //#endregion Generic Functions
-
-        //#region Users
-
-        // Button select/deselect all
-        $("#select-all-users").click(function () {
-            var all = $("input.select-all-users")[0];
-            all.checked = !all.checked
-            var checked = all.checked;
-            $("input.select-item-users").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-users", "input.select-item-users");
-        });
-
-        //button select invert
-        $("#select-invert-users").click(function () {
-            $("input.select-item-users").each(function (index, item) {
-                item.checked = !item.checked;
-            });
-            checkSelectedItems("users");
-        });
-
-        //column checkbox select all or cancel
-        $("input.select-all-users").click(function () {
-            var checked = this.checked;
-            $("input.select-item-users").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-users", "input.select-item-users");
-        });
-
-        $("#delete-users").click(() => {
-            var selectedItems = getSelectedItems("users");
-            console.log("Selected Users:", selectedItems);
-            deleteItems("users", selectedItems).then((response) => {
-                console.log("Delete response:", response);
-                showMessage("User(s) deleted");
-                deselectAllItems("users"); //Otherwise, they will still count as selected after refresh
-                loadObjects();
-                checkSelectedItems("users");
-            });
-        });
-
-        //#endregion
-
-        //#region Queues
-
-        // Button select/deselect all
-        $("#select-all-queues").click(function () {
-            var all = $("input.select-all-queues")[0];
-            all.checked = !all.checked
-            var checked = all.checked;
-            $("input.select-item-queues").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-queues", "input.select-item-queues");
-        });
-
-        //button select invert
-        $("#select-invert-queues").click(function () {
-            $("input.select-item-queues").each(function (index, item) {
-                item.checked = !item.checked;
-            });
-            checkSelectedItems("queues");
-        });
-
-        //column checkbox select all or cancel
-        $("input.select-all-queues").click(function () {
-            var checked = this.checked;
-            $("input.select-item-queues").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-queues", "input.select-item-queues");
-        });
-
-        $("#delete-queues").click(() => {
-            var selectedItems = getSelectedItems("queues");
-            console.log("Selected queues:", selectedItems);
-            deleteItems("queues", selectedItems).then((response) => {
-                console.log("Delete response:", response);
-                showMessage("Queue(s) deleted");
-                deselectAllItems("queues"); //Otherwise, they will still count as selected after refresh
-                loadObjects();
-                checkSelectedItems("queues");
-            });
-        });
-
-        //#endregion
-
-        //#region Skills
-
-        // Button select/deselect all
-        $("#select-all-skills").click(function () {
-            var all = $("input.select-all-skills")[0];
-            all.checked = !all.checked
-            var checked = all.checked;
-            $("input.select-item-skills").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-skills", "input.select-item-skills");
-        });
-
-        //button select invert
-        $("#select-invert-skills").click(function () {
-            $("input.select-item-skills").each(function (index, item) {
-                item.checked = !item.checked;
-            });
-            checkSelectedItems("skills");
-        });
-
-        //column checkbox select all or cancel
-        $("input.select-all-skills").click(function () {
-            var checked = this.checked;
-            $("input.select-item-skills").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-skills", "input.select-item-skills");
-        });
-
-        $("#delete-skills").click(() => {
-            var selectedItems = getSelectedItems("skills");
-            console.log("Selected skills:", selectedItems);
-            deleteItems("skills", selectedItems).then((response) => {
-                console.log("Delete response:", response);
-                showMessage("Skill(s) deleted");
-                deselectAllItems("skills"); //Otherwise, they will still count as selected after refresh
-                loadObjects();
-                checkSelectedItems("skills");
-            });
-        });
-
-        //#endregion
-
-        //#region Flows
-
-        // Button select/deselect all
-        $("#select-all-flows").click(function () {
-            var all = $("input.select-all-flows")[0];
-            all.checked = !all.checked
-            var checked = all.checked;
-            $("input.select-item-flows").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-flows", "input.select-item-flows");
-        });
-
-        //button select invert
-        $("#select-invert-flows").click(function () {
-            $("input.select-item-flows").each(function (index, item) {
-                item.checked = !item.checked;
-            });
-            checkSelectedItems("flows");
-        });
-
-        //column checkbox select all or cancel
-        $("input.select-all-flows").click(function () {
-            var checked = this.checked;
-            $("input.select-item-flows").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-flows", "input.select-item-flows");
-        });
-
-        $("#delete-flows").click(() => {
-            var selectedItems = getSelectedItems("flows");
-            console.log("Selected flows:", selectedItems);
-            deleteItems("flows", selectedItems).then((response) => {
-                console.log("Delete response:", response);
-                showMessage("Flow(s) deleted");
-                deselectAllItems("flows"); //Otherwise, they will still count as selected after refresh
-                loadObjects();
-                checkSelectedItems("flows");
-            });
-        });
-
-        //#endregion
-
-        //#region Presence Definitions
-
-        // Button select/deselect all
-        $("#select-all-presenceDefinitions").click(function () {
-            var all = $("input.select-all-presenceDefinitions")[0];
-            all.checked = !all.checked
-            var checked = all.checked;
-            $("input.select-item-presenceDefinitions").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-presenceDefinitions", "input.select-item-presenceDefinitions");
-        });
-
-        //button select invert
-        $("#select-invert-presenceDefinitions").click(function () {
-            $("input.select-item-presenceDefinitions").each(function (index, item) {
-                item.checked = !item.checked;
-            });
-            checkSelectedItems("presenceDefinitions");
-        });
-
-        //column checkbox select all or cancel
-        $("input.select-all-presenceDefinitions").click(function () {
-            var checked = this.checked;
-            $("input.select-item-presenceDefinitions").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-presenceDefinitions", "input.select-item-presenceDefinitions");
-        });
-
-        $("#delete-presenceDefinitions").click(() => {
-            var selectedItems = getSelectedItems("presenceDefinitions");
-            console.log("Selected presenceDefinitions:", selectedItems);
-            deleteItems("presenceDefinitions", selectedItems).then((response) => {
-                console.log("Delete response:", response);
-                showMessage("Presence Definition(s) deleted");
-                deselectAllItems("presenceDefinitions"); //Otherwise, they will still count as selected after refresh
-                loadObjects();
-                checkSelectedItems("presenceDefinitions");
-            });
-        });
-
-        //#endregion
-
-        //#region WrapUp Codes
-
-        // Button select/deselect all
-        $("#select-all-wrapupcodes").click(function () {
-            var all = $("input.select-all-wrapupcodes")[0];
-            all.checked = !all.checked
-            var checked = all.checked;
-            $("input.select-item-wrapupcodes").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-wrapupcodes", "input.select-item-wrapupcodes");
-        });
-
-        //button select invert
-        $("#select-invert-wrapupcodes").click(function () {
-            $("input.select-item-wrapupcodes").each(function (index, item) {
-                item.checked = !item.checked;
-            });
-            checkSelectedItems("wrapupcodes");
-        });
-
-        //column checkbox select all or cancel
-        $("input.select-all-wrapupcodes").click(function () {
-            var checked = this.checked;
-            $("input.select-item-wrapupcodes").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-wrapupcodes", "input.select-item-wrapupcodes");
-        });
-
-        $("#delete-wrapupcodes").click(() => {
-            var selectedItems = getSelectedItems("wrapupcodes");
-            console.log("Selected wrapupcodes:", selectedItems);
-            deleteItems("wrapupcodes", selectedItems).then((response) => {
-                console.log("Delete response:", response);
-                showMessage("Wrap Up Code(s) deleted");
-                deselectAllItems("wrapupcodes"); //Otherwise, they will still count as selected after refresh
-                loadObjects();
-                checkSelectedItems("wrapupcodes");
-            });
-        });
-
-        //#endregion
-
-        //#region Outbound Campaigns
-
-        // Button select/deselect all
-        $("#select-all-outboundCampaigns").click(function () {
-            var all = $("input.select-all-outboundCampaigns")[0];
-            all.checked = !all.checked
-            var checked = all.checked;
-            $("input.select-item-outboundCampaigns").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-outboundCampaigns", "input.select-item-outboundCampaigns");
-        });
-
-        //button select invert
-        $("#select-invert-outboundCampaigns").click(function () {
-            $("input.select-item-outboundCampaigns").each(function (index, item) {
-                item.checked = !item.checked;
-            });
-            checkSelectedItems("outboundCampaigns");
-        });
-
-        //column checkbox select all or cancel
-        $("input.select-all-outboundCampaigns").click(function () {
-            var checked = this.checked;
-            $("input.select-item-outboundCampaigns").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-outboundCampaigns", "input.select-item-outboundCampaigns");
-        });
-
-        $("#delete-outboundCampaigns").click(() => {
-            var selectedItems = getSelectedItems("outboundCampaigns");
-            console.log("Selected outboundCampaigns:", selectedItems);
-            deleteItems("outboundCampaigns", selectedItems).then((response) => {
-                console.log("Delete response:", response);
-                showMessage("Outbound Campaign(s) deleted");
-                deselectAllItems("outboundCampaigns"); //Otherwise, they will still count as selected after refresh
-                loadObjects();
-                checkSelectedItems("outboundCampaigns");
-            });
-        });
-
-        //#endregion
-
-        //#region Scripts
-
-        // Button select/deselect all
-        $("#select-all-scripts").click(function () {
-            var all = $("input.select-all-scripts")[0];
-            all.checked = !all.checked
-            var checked = all.checked;
-            $("input.select-item-scripts").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-scripts", "input.select-item-scripts");
-        });
-
-        //button select invert
-        $("#select-invert-scripts").click(function () {
-            $("input.select-item-scripts").each(function (index, item) {
-                item.checked = !item.checked;
-            });
-            checkSelectedItems("scripts");
-        });
-
-        //column checkbox select all or cancel
-        $("input.select-all-scripts").click(function () {
-            var checked = this.checked;
-            $("input.select-item-scripts").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-scripts", "input.select-item-scripts");
-        });
-
-        $("#delete-scripts").click(() => {
-            var selectedItems = getSelectedItems("scripts");
-            console.log("Selected scripts:", selectedItems);
-            deleteItems("scripts", selectedItems).then((response) => {
-                console.log("Delete response:", response);
-                showMessage("Script(s) deleted");
-                deselectAllItems("scripts"); //Otherwise, they will still count as selected after refresh
-                loadObjects();
-                checkSelectedItems("scripts");
-            });
-        });
-
-        //#endregion
-
-        //#region Web Chat Deployments
-
-        // Button select/deselect all
-        $("#select-all-webChatDeployments").click(function () {
-            var all = $("input.select-all-webChatDeployments")[0];
-            all.checked = !all.checked
-            var checked = all.checked;
-            $("input.select-item-webChatDeployments").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-webChatDeployments", "input.select-item-webChatDeployments");
-        });
-
-        //button select invert
-        $("#select-invert-webChatDeployments").click(function () {
-            $("input.select-item-webChatDeployments").each(function (index, item) {
-                item.checked = !item.checked;
-            });
-            checkSelectedItems("webChatDeployments");
-        });
-
-        //column checkbox select all or cancel
-        $("input.select-all-webChatDeployments").click(function () {
-            var checked = this.checked;
-            $("input.select-item-webChatDeployments").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-webChatDeployments", "input.select-item-webChatDeployments");
-        });
-
-        $("#delete-webChatDeployments").click(() => {
-            var selectedItems = getSelectedItems("webChatDeployments");
-            console.log("Selected webChatDeployments:", selectedItems);
-            deleteItems("webChatDeployments", selectedItems).then((response) => {
-                console.log("Delete response:", response);
-                showMessage("Web Chat Deployment(s) deleted");
-                deselectAllItems("webChatDeployments"); //Otherwise, they will still count as selected after refresh
-                loadObjects();
-                checkSelectedItems("webChatDeployments");
-            });
-        });
-
-        //#endregion
-
-        //#region Data Actions
-
-        // Button select/deselect all
-        $("#select-all-dataactions").click(function () {
-            var all = $("input.select-all-dataactions")[0];
-            all.checked = !all.checked
-            var checked = all.checked;
-            $("input.select-item-dataactions").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-dataactions", "input.select-item-dataactions");
-        });
-
-        //button select invert
-        $("#select-invert-dataactions").click(function () {
-            $("input.select-item-dataactions").each(function (index, item) {
-                item.checked = !item.checked;
-            });
-            checkSelectedItems("dataactions");
-        });
-
-        //column checkbox select all or cancel
-        $("input.select-all-dataactions").click(function () {
-            var checked = this.checked;
-            $("input.select-item-dataactions").each(function (index, item) {
-                item.checked = checked;
-            });
-            updateButtonStatus("#delete-dataactions", "input.select-item-dataactions");
-        });
-
-        $("#delete-dataactions").click(() => {
-            var selectedItems = getSelectedItems("dataactions");
-            console.log("Selected dataactions:", selectedItems);
-            deleteItems("dataactions", selectedItems).then((response) => {
-                console.log("Delete response:", response);
-                showMessage("Data Action(s) deleted");
-                deselectAllItems("dataactions"); //Otherwise, they will still count as selected after refresh
-                loadObjects();
-                checkSelectedItems("dataactions");
-            });
-        });
-
-        //#endregion
 
     </script>
 </body>
