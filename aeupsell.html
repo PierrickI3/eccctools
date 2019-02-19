@@ -107,9 +107,9 @@
                     <div class="card-body">
                         <form id="connectionform">
                             <h4 class="header-title">PureCloud Connection</h4>
-                            <small class="form-text text-muted">Populate all fields below then click on <code>Connect</code></small><br />
+                            <span class="form-text text-muted">Populate all fields below then click on <code>Connect</code></span><br>
                             <div class="form-group">
-                                <label for="clientId">Client Id</label>
+                                <label for="clientId">Client Id</label><small><a href="https://help.mypurecloud.com/articles/create-an-oauth-client/" target="_blank"> How to create a Client Credentials Client Id & Secret?</a></small>
                                 <input type="text" required class="form-control" name="clientId" id="clientId" placeholder="Enter your client id">
                             </div>
                             <div class="form-group">
@@ -140,8 +140,9 @@
                             </div>
                             <div class="float-right">
                                 <div id="error"><span class="text-danger"></span></div>
+                                <div id="success"><span class="text-success"></span></div>
                                 <button id="testConnection" type="button" class="btn btn-info">Test Connection</button>
-                                <button id="submitRequest" disabled type="submit" class="btn btn-primary">Submit Request</button>
+                                <button id="submitRequest" disabled class="btn btn-primary">Submit Request</button>
                             </div>
                         </form>
                     </div>
@@ -583,11 +584,17 @@
                 $("#connectionform #error span").html("");
                 $("#connectionform #error").hide();
 
+                // Clear connection success
+                $("#connectionform #success span").html("");
+                $("#connectionform #success").hide();
+
                 // Test connection to PureCloud
                 connectToPureCloud($("#clientId").val(), $("#clientSecret").val(), $("#environment").children("option:selected").val())
                     .then((token) => {
                         $("#submitRequest").removeAttr("disabled");
                         showMessage("Click on Submit Request to continue...");
+                        $("#connectionform #success span").html("Connection succeeded. Click on Submit Request to continue.");
+                        $("#connectionform #success").show();
                     }).catch((error) => {
                         $("#submitRequest").attr("disabled", true);
                         console.error(error);
@@ -599,11 +606,19 @@
         // Submit Request Button
         $("#submitRequest").click(() => {
 
+            event.preventDefault();
+
+            $("#connectionform #success").hide();
+
             if ($("#connectionform").valid()) {
 
                 // Clear errors
                 $("#connectionform #error span").html("");
                 $("#connectionform #error").hide();
+
+                // Clear success message
+                $("#connectionform #success span").html("");
+                $("#connectionform #success").hide();
 
                 var clientId = $("#clientId").val();
                 var clientSecret = $("#clientSecret").val();
@@ -624,11 +639,14 @@
                 submitRequest(clientId, clientSecret, environment, startDate, duration, emailAddress, uuid)
                     .then((token) => {
                         showMessage("Request submitted. Thank you!");
-                        sendEmail(emailAddress, "Your AE Upsell Task", "Thank you for using the AE Upsell tool. When ready, your data will be available here: https://pierricki3.github.io/eccctools/aeupsellrequests.html?taskId=" + uuid).then((response) => {
+                        sendEmail(emailAddress, "Your AE Upsell Task", "Thank you for using the AE Upsell tool. When ready, your data will be available here: https://pierricki3.github.io/eccctools/aeupsellrequests.html?taskId=" + uuid + "<br/>The data might not be available while the process is running. Please wait for a few minutes before hitting the Refresh button.").then((response) => {
                             console.log(response);
                         }).catch((error) => {
                             showMessage("Failed to send email", true);
                         });
+                        $("#connectionform #success span").html("Your request has been submitted. Please check your email for more details.");
+                        $("#connectionform #success").show();
+
                     }).catch((error) => {
                         showMessage(error, true);
                     });
