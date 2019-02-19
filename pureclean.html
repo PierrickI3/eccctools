@@ -105,30 +105,33 @@
                 </div>
                 <div class="mt-5 mb-5 card card-bordered">
                     <div class="card-body">
-                        <h4 class="header-title">PureCloud Connection</h4>
-                        <small class="form-text text-muted">Populate all fields below then click on <code>Connect</code></small><br />
-                        <div class="form-group">
-                            <label for="clientId">Client Id</label>
-                            <input type="text" class="form-control" id="clientId" placeholder="Enter your client id">
-                        </div>
-                        <div class="form-group">
-                            <label for="clientSecret">Client Secret</label>
-                            <input type="password" class="form-control" id="clientSecret" placeholder="Enter your client secret">
-                        </div>
-                        <div class="form-group">
-                            <label for="environment">PureCloud Environment</label>
-                            <select class="form-control" id="environment">
-                                <option value="mypurecloud.ie" selected>mypurecloud.ie (Ireland)</option>
-                                <option value="mypurecloud.com">mypurecloud.com (US)</option>
-                                <option value="mypurecloud.de">mypurecloud.de (Germany)</option>
-                                <option value="mypurecloud.com.au">mypurecloud.com.au (Australia/New Zealand)</option>
-                                <option value="mypurecloud.jp">mypurecloud.jp (Japan)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <button id="connect" type="button" class="btn btn-primary"><i class="ti-unlock"></i> Connect</button>
-                        </div>
-
+                        <form id="connectionform">
+                            <h4 class="header-title">PureCloud Connection</h4>
+                            <small class="form-text text-muted">Populate all fields below then click on <code>Connect</code></small><br />
+                            <div class="form-group">
+                                <label for="clientId">Client Id</label>
+                                <input type="text" class="form-control" required name="clientId" id="clientId" placeholder="Enter your client id">
+                            </div>
+                            <div class="form-group">
+                                <label for="clientSecret">Client Secret</label>
+                                <input type="password" class="form-control" required name="clientSecret" id="clientSecret" placeholder="Enter your client secret">
+                            </div>
+                            <div class="form-group">
+                                <label for="environment">PureCloud Environment</label>
+                                <select class="form-control" required name="environment" id="environment">
+                                    <option value="mypurecloud.ie" selected>mypurecloud.ie (Ireland)</option>
+                                    <option value="mypurecloud.com">mypurecloud.com (US)</option>
+                                    <option value="mypurecloud.de">mypurecloud.de (Germany)</option>
+                                    <option value="mypurecloud.com.au">mypurecloud.com.au (Australia/New Zealand)</option>
+                                    <option value="mypurecloud.jp">mypurecloud.jp (Japan)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <div id="error"><span class="text-danger"></span></div>
+                                <div id="success"><span class="text-success"></span></div>
+                                <button id="connect" type="button" class="btn btn-primary"><i class="ti-unlock"></i> Connect</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <div class="mt-5 mb-5 card card-bordered" id="pureCloudObjects">
@@ -507,23 +510,55 @@
     <!-- This page's scripts -->
     <script src="assets/js/aws.js"></script>
     <script src="assets/js/notifications.js"></script>
+    <script src="assets/js/jquery.validate.min.js"></script>
+    <script src="assets/js/additional-methods.min.js"></script>
 
     <script>
 
         // Init
         $("#pureCloudObjects").hide();
 
+        $("#connectionform").validate({
+            errorClass: "text-danger border border-danger",
+            validClass: "",
+            invalidHandler: function (event, validator) {
+                var errors = validator.numberOfInvalids();
+                if (errors) {
+                    var message = errors == 1
+                        ? 'You missed 1 field. It has been highlighted'
+                        : 'You missed ' + errors + ' fields. They have been highlighted';
+                    $("#connectionform #error span").html(message);
+                    console.error(message);
+                    $("#connectionform #error").show();
+                }
+            }
+        });
+
         // Connect to PureCloud Button
         $("#connect").click(() => {
-            connectToPureCloud($("#clientId").val(), $("#clientSecret").val(), $("#environment").children("option:selected").val())
-                .then((token) => {
-                    $("#pureCloudObjects").show();
-                    showMessage("Please wait while all objects are retrieved...");
-                    loadObjects();
-                }).catch((error) => {
-                    console.error(error);
-                    showMessage(error, true);
-                });
+
+            event.preventDefault();
+
+            if ($("#connectionform").valid()) {
+
+                // Clear errors
+                $("#connectionform #error span").html("");
+                $("#connectionform #error").hide();
+
+                // Clear connection success
+                $("#connectionform #success span").html("");
+                $("#connectionform #success").hide();
+
+                connectToPureCloud($("#clientId").val(), $("#clientSecret").val(), $("#environment").children("option:selected").val())
+                    .then((token) => {
+                        $("#pureCloudObjects").show();
+                        showMessage("Please wait while all objects are retrieved...");
+                        loadObjects();
+                    }).catch((error) => {
+                        console.error(error);
+                        showMessage(error, true);
+                    });
+            }
         });
 
         //#region Generic functions
