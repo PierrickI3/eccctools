@@ -115,7 +115,7 @@ function getRequestData(taskId) {
 
       $.ajax(options).done((response) => {
         console.log(response);
-        if (!response) {
+        if (response) {
           resolve(response);
         } else {
           reject(response);
