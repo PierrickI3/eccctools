@@ -510,6 +510,7 @@
     <!-- This page's scripts -->
     <script src="assets/js/aws.js"></script>
     <script src="assets/js/notifications.js"></script>
+    <script src="assets/js/sweetalert.min.js"></script>
     <script src="assets/js/jquery.validate.min.js"></script>
     <script src="assets/js/additional-methods.min.js"></script>
 
@@ -744,13 +745,20 @@
         $("#delete-users").click(() => {
             var selectedItems = getSelectedItems("users");
             console.log("Selected Users:", selectedItems);
-            deleteItems("users", selectedItems).then((response) => {
-                console.log("Delete response:", response);
-                showMessage("User(s) deleted");
-                deselectAllItems("users"); //Otherwise, they will still count as selected after refresh
-                loadObjects();
-                checkSelectedItems("users");
-            });
+            if (selectedItems.length == $("#users tr").length) {
+                showMessage("You cannot delete ALL users. You need to keep at least one.", true);
+                return;
+            }
+            showAlert("Are you sure?", `You are about to delete ${selectedItems.length} user(s). This cannot be undone!`, "Yes, Delete!").then(() => {
+                deleteItems("users", selectedItems).then((response) => {
+                    console.log("Delete response:", response);
+                    showMessage("User(s) deleted");
+                    deselectAllItems("users"); //Otherwise, they will still count as selected after refresh
+                    loadObjects();
+                    checkSelectedItems("users");
+                });
+
+            })
         });
 
         //#endregion
