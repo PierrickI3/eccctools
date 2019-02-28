@@ -745,23 +745,22 @@
         });
 
         $("#delete-users").click(() => {
-            var selectedItems = getSelectedItems("users");
-            console.log("Selected Users:", selectedItems);
-            if (selectedItems.length == $("#users tr").length) {
-                showMessage("You cannot delete ALL users. You need to keep at least one.", true);
-                return;
-            }
+        });
+
+        function deleteSelectedUser(userId) {
+            console.log("Selected User:", userId);
+            var selectedItems = [];
+            selectedItems.push(userId);
             showAlert("Are you sure?", `You are about to delete ${selectedItems.length} user(s). This cannot be undone!`, "Yes, Delete!").then(() => {
                 deleteItems("users", selectedItems).then((response) => {
                     console.log("Delete response:", response);
-                    showMessage("User(s) deleted");
+                    showMessage("Task Complete");
                     deselectAllItems("users"); //Otherwise, they will still count as selected after refresh
                     loadObjects();
                     checkSelectedItems("users");
                 });
-
             })
-        });
+        }
 
         //#endregion
 
@@ -800,7 +799,7 @@
             console.log("Selected queues:", selectedItems);
             deleteItems("queues", selectedItems).then((response) => {
                 console.log("Delete response:", response);
-                showMessage("Queue(s) deleted");
+                showMessage("Task Complete");
                 deselectAllItems("queues"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("queues");
@@ -844,7 +843,7 @@
             console.log("Selected skills:", selectedItems);
             deleteItems("skills", selectedItems).then((response) => {
                 console.log("Delete response:", response);
-                showMessage("Skill(s) deleted");
+                showMessage("Task Complete");
                 deselectAllItems("skills"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("skills");
@@ -888,7 +887,7 @@
             console.log("Selected flows:", selectedItems);
             deleteItems("flows", selectedItems).then((response) => {
                 console.log("Delete response:", response);
-                showMessage("Flow(s) deleted");
+                showMessage("Task Complete");
                 deselectAllItems("flows"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("flows");
@@ -932,7 +931,7 @@
             console.log("Selected presenceDefinitions:", selectedItems);
             deleteItems("presenceDefinitions", selectedItems).then((response) => {
                 console.log("Delete response:", response);
-                showMessage("Presence Definition(s) deleted");
+                showMessage("Task Complete");
                 deselectAllItems("presenceDefinitions"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("presenceDefinitions");
@@ -976,7 +975,7 @@
             console.log("Selected wrapupcodes:", selectedItems);
             deleteItems("wrapupcodes", selectedItems).then((response) => {
                 console.log("Delete response:", response);
-                showMessage("Wrap Up Code(s) deleted");
+                showMessage("Task Complete");
                 deselectAllItems("wrapupcodes"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("wrapupcodes");
@@ -1020,7 +1019,7 @@
             console.log("Selected outboundCampaigns:", selectedItems);
             deleteItems("outboundCampaigns", selectedItems).then((response) => {
                 console.log("Delete response:", response);
-                showMessage("Outbound Campaign(s) deleted");
+                showMessage("Task Complete");
                 deselectAllItems("outboundCampaigns"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("outboundCampaigns");
@@ -1064,7 +1063,7 @@
             console.log("Selected scripts:", selectedItems);
             deleteItems("scripts", selectedItems).then((response) => {
                 console.log("Delete response:", response);
-                showMessage("Script(s) deleted");
+                showMessage("Task Complete");
                 deselectAllItems("scripts"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("scripts");
@@ -1108,7 +1107,7 @@
             console.log("Selected webChatDeployments:", selectedItems);
             deleteItems("webChatDeployments", selectedItems).then((response) => {
                 console.log("Delete response:", response);
-                showMessage("Web Chat Deployment(s) deleted");
+                showMessage("Task Complete");
                 deselectAllItems("webChatDeployments"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("webChatDeployments");
@@ -1152,7 +1151,7 @@
             console.log("Selected dataactions:", selectedItems);
             deleteItems("dataactions", selectedItems).then((response) => {
                 console.log("Delete response:", response);
-                showMessage("Data Action(s) deleted");
+                showMessage("Task Complete");
                 deselectAllItems("dataactions"); //Otherwise, they will still count as selected after refresh
                 loadObjects();
                 checkSelectedItems("dataactions");

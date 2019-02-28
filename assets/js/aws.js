@@ -195,7 +195,16 @@ function deleteItems(type, items) {
         if (data.hasOwnProperty("errorMessage")) {
           console.error(data);
           reject(JSON.stringify(data.errorMessage));
-        } else if (data) {
+        }
+
+        console.log("data:", data);
+        $.each(data, (i, dataItem) => {
+          if (dataItem.statusCode == 400) {
+            showMessage("An error occurred while deleting " + dataItem.id, true);
+          }
+        });
+
+        if (data) {
           resolve(data);
         } else {
           console.error("Unknown response:", data);
@@ -204,6 +213,7 @@ function deleteItems(type, items) {
         console.error(jqXHR);
         console.error(textStatus);
         console.error(errorThrown);
+        showMessage()
         reject(errorThrown);
       });
     } catch (error) {
