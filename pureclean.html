@@ -156,9 +156,9 @@
                                                     <th class="active">
                                                         <input type="checkbox" class="select-all-users checkbox" name="select-all-users" />
                                                     </th>
-                                                    <th class="success">Id</th>
                                                     <th class="warning">Name</th>
                                                     <th class="danger">Email Address</th>
+                                                    <th class="success">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="users">
@@ -185,8 +185,8 @@
                                                     <th class="active">
                                                         <input type="checkbox" class="select-all-queues checkbox" name="select-all-queues" />
                                                     </th>
-                                                    <th class="success">Id</th>
                                                     <th class="warning">Name</th>
+                                                    <th class="success">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="queues">
@@ -213,8 +213,8 @@
                                                     <th class="active">
                                                         <input type="checkbox" class="select-all-skills checkbox" name="select-all-skills" />
                                                     </th>
-                                                    <th class="success">Id</th>
                                                     <th class="warning">Name</th>
+                                                    <th class="success">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="skills">
@@ -241,8 +241,8 @@
                                                     <th class="active">
                                                         <input type="checkbox" class="select-all-flows checkbox" name="select-all-flows" />
                                                     </th>
-                                                    <th class="success">Id</th>
                                                     <th class="warning">Name</th>
+                                                    <th class="success">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="flows">
@@ -269,8 +269,8 @@
                                                     <th class="active">
                                                         <input type="checkbox" class="select-all-presenceDefinitions checkbox" name="select-all-presenceDefinitions" />
                                                     </th>
-                                                    <th class="success">Id</th>
                                                     <th class="warning">Name</th>
+                                                    <th class="success">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="presenceDefinitions">
@@ -297,8 +297,8 @@
                                                     <th class="active">
                                                         <input type="checkbox" class="select-all-wrapupcodes checkbox" name="select-all-wrapupcodes" />
                                                     </th>
-                                                    <th class="success">Id</th>
                                                     <th class="warning">Name</th>
+                                                    <th class="success">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="wrapupcodes">
@@ -325,8 +325,8 @@
                                                     <th class="active">
                                                         <input type="checkbox" class="select-all-outboundCampaigns checkbox" name="select-all-outboundCampaigns" />
                                                     </th>
-                                                    <th class="success">Id</th>
                                                     <th class="warning">Name</th>
+                                                    <th class="success">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="outboundCampaigns">
@@ -353,8 +353,8 @@
                                                     <th class="active">
                                                         <input type="checkbox" class="select-all-scripts checkbox" name="select-all-scripts" />
                                                     </th>
-                                                    <th class="success">Id</th>
                                                     <th class="warning">Name</th>
+                                                    <th class="success">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="scripts">
@@ -381,8 +381,8 @@
                                                     <th class="active">
                                                         <input type="checkbox" class="select-all-webChatDeployments checkbox" name="select-all-webChatDeployments" />
                                                     </th>
-                                                    <th class="success">Id</th>
                                                     <th class="warning">Name</th>
+                                                    <th class="success">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="webChatDeployments">
@@ -409,8 +409,8 @@
                                                     <th class="active">
                                                         <input type="checkbox" class="select-all-recordings checkbox" name="select-all-recordings" />
                                                     </th>
-                                                    <th class="success">Id</th>
                                                     <th class="warning">Name</th>
+                                                    <th class="success">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="recordings">
@@ -437,8 +437,8 @@
                                                     <th class="active">
                                                         <input type="checkbox" class="select-all-divisions checkbox" name="select-all-divisions" />
                                                     </th>
-                                                    <th class="success">Id</th>
                                                     <th class="warning">Name</th>
+                                                    <th class="success">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="divisions">
@@ -465,8 +465,8 @@
                                                     <th class="active">
                                                         <input type="checkbox" class="select-all-dataactions checkbox" name="select-all-dataactions" />
                                                     </th>
-                                                    <th class="success">Id</th>
                                                     <th class="warning">Name</th>
+                                                    <th class="success">Id</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="dataactions">
@@ -654,9 +654,6 @@
                 var checkItem = $("<td />", { class: "active" }).appendTo(row);
                 $("<input />", { type: "checkbox", class: "select-item-" + tableName + " checkbox", name: "select-item-" + tableName }).val(item.id).appendTo(checkItem);
 
-                // Id Column
-                $("<td />").text(item.id).appendTo(row);
-
                 // Name Column
                 if (item.hasOwnProperty("name")) {
                     $("<td />").text(item.name).appendTo(row);
@@ -667,6 +664,11 @@
                 // Email Address Column
                 if (item.hasOwnProperty("email")) {
                     $("<td />").text(item.email).appendTo(row);
+                }
+
+                // Id Column
+                if (item.hasOwnProperty("id")) {
+                    $("<td />").text(item.id).appendTo(row);
                 }
             });
 
