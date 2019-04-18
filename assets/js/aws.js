@@ -9,84 +9,41 @@ const requestUrl = aebaseurl + "/request";
 
 const stateMachineArn = "arn:aws:states:eu-west-1:715662236651:stateMachine:upsell-startProcess";
 
-var pureCloudToken = undefined;
-var pureCloudEnvironment = undefined;
-
-function connectToPureCloud(clientId, clientSecret, environment) {
-  console.log(`Connecting to PureCloud... Client Id: ${clientId}, environment: ${environment}`);
-  pureCloudEnvironment = environment;
-  return new Promise((resolve, reject) => {
-    try {
-      $.ajax({
-        url: tokenUrl,
-        method: "POST",
-        beforeSend: function (xhr) {
-          xhr.setRequestHeader("Content-Type", "application/json");
-          xhr.setRequestHeader("x-api-key", apiKey);
-        },
-        data: JSON.stringify({
-          clientId: clientId,
-          clientSecret: clientSecret,
-          env: environment
-        }),
-      }).done((data) => {
-        if (data.hasOwnProperty("errorMessage")) {
-          console.error(data);
-          reject(JSON.stringify(data.errorMessage));
-        } else if (data.hasOwnProperty("token")) {
-          pureCloudToken = data.token;
-          console.log("Token:", pureCloudToken)
-          resolve(pureCloudToken);
-        } else {
-          console.error("Unknown response:", data);
-        }
-      }).fail((jqXHR, textStatus, errorThrown) => {
-        console.error(jqXHR);
-        console.error(textStatus);
-        console.error(errorThrown);
-        reject(error);
-      })
-    } catch (error) {
-      console.error(error);
-      reject(error);
-    }
-  });
-}
-
 //#region AE Upsell
 
-function submitRequest(clientId, clientSecret, environment, startDate, duration, emailAddress, taskId) {
+function submitRequest(orgId, startDate, duration, emailAddress, taskId) {
   console.log("Submitting Request...");
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     try {
-
       var options = {
-        "async": true,
-        "crossDomain": true,
-        "url": requestUrl,
-        "method": "POST",
-        "headers": {
+        async: true,
+        crossDomain: true,
+        url: requestUrl,
+        method: "POST",
+        headers: {
           "Content-Type": "application/json",
           "x-api-key": apiKey
         },
-        "processData": false,
-        "data": `{ \"input\": \"{ \\\"name\\\": \\\"${taskId}\\\", \\\"clientId\\\" : \\\"${clientId}\\\", \\\"clientSecret\\\" : \\\"${clientSecret}\\\",\\\"env\\\" : \\\"${environment}\\\" , \\\"startDate\\\": \\\"${startDate}\\\", \\\"duration\\\": ${duration} }\", \"name\": \"${taskId}\", \"stateMachineArn\": \"${stateMachineArn}\"}`
-      }
+        processData: false,
+        data: `{ \"input\": \"{ \\\"purecloud\\\": { \\\"orgId\\\": \\\"${orgId}\\\" }, \\\"name\\\": \\\"${taskId}\\\", \\\"clientId\\\" : \\\"\\\", \\\"clientSecret\\\" : \\\"\\\",\\\"env\\\" : \\\"\\\" , \\\"startDate\\\": \\\"${startDate}\\\", \\\"duration\\\": ${duration} }\", \"name\": \"${taskId}\", \"stateMachineArn\": \"${stateMachineArn}\"}`
+      };
 
       console.log(options);
 
-      $.ajax(options).done((response) => {
-        console.log(response);
-        if (response.hasOwnProperty("errorMessage")) {
-          reject(response);
-          return;
-        }
-        resolve(response.token);
-      }).fail((jqXHR, textStatus, errorThrown) => {
-        console.error(jqXHR);
-        console.error(textStatus);
-        reject(errorThrown);
-      });
+      $.ajax(options)
+        .done(response => {
+          console.log(response);
+          if (response.hasOwnProperty("errorMessage")) {
+            reject(response);
+            return;
+          }
+          resolve(response.token);
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          console.error(jqXHR);
+          console.error(textStatus);
+          reject(errorThrown);
+        });
     } catch (error) {
       console.error(error);
       reject(error);
@@ -96,35 +53,36 @@ function submitRequest(clientId, clientSecret, environment, startDate, duration,
 
 function getRequestData(taskId) {
   console.log(`Getting Request (${taskId})...`);
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     try {
-
       var options = {
-        "async": true,
-        "crossDomain": true,
-        "url": `${requestUrl}?name=${taskId}`,
-        "method": "GET",
-        "headers": {
+        async: true,
+        crossDomain: true,
+        url: `${requestUrl}?name=${taskId}`,
+        method: "GET",
+        headers: {
           "Content-Type": "application/json",
           "x-api-key": apiKey
         },
-        "processData": false
-      }
+        processData: false
+      };
 
       console.log(options);
 
-      $.ajax(options).done((response) => {
-        console.log(response);
-        if (response) {
-          resolve(response);
-        } else {
-          reject(response);
-        }
-      }).fail((jqXHR, textStatus, errorThrown) => {
-        console.error(jqXHR);
-        console.error(textStatus);
-        reject(errorThrown);
-      });
+      $.ajax(options)
+        .done(response => {
+          console.log("Request Data:", response);
+          if (response) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          console.error(jqXHR);
+          console.error(textStatus);
+          reject(errorThrown);
+        });
     } catch (error) {
       console.error(error);
       reject(error);
@@ -142,7 +100,7 @@ function getItems(type) {
       $.ajax({
         url: actionUrl,
         method: "POST",
-        beforeSend: function (xhr) {
+        beforeSend: function(xhr) {
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.setRequestHeader("x-api-key", apiKey);
         },
@@ -152,21 +110,23 @@ function getItems(type) {
           objectType: type,
           actionType: "GET"
         })
-      }).done((data) => {
-        if (data.hasOwnProperty("errorMessage")) {
-          console.error(data);
-          reject(JSON.stringify(data.errorMessage));
-        } else if (data) {
-          resolve(data.items);
-        } else {
-          console.error("Unknown response:", data);
-        }
-      }).fail((jqXHR, textStatus, errorThrown) => {
-        console.error(jqXHR);
-        console.error(textStatus);
-        console.error(errorThrown);
-        reject(errorThrown);
       })
+        .done(data => {
+          if (data.hasOwnProperty("errorMessage")) {
+            console.error(data);
+            reject(JSON.stringify(data.errorMessage));
+          } else if (data) {
+            resolve(data.items);
+          } else {
+            console.error("Unknown response:", data);
+          }
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          console.error(jqXHR);
+          console.error(textStatus);
+          console.error(errorThrown);
+          reject(errorThrown);
+        });
     } catch (error) {
       console.error(error);
       reject(error);
@@ -180,7 +140,7 @@ function deleteItems(type, items) {
       $.ajax({
         url: actionUrl,
         method: "POST",
-        beforeSend: function (xhr) {
+        beforeSend: function(xhr) {
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.setRequestHeader("x-api-key", apiKey);
         },
@@ -191,31 +151,33 @@ function deleteItems(type, items) {
           actionType: "DELETE",
           items: items
         })
-      }).done((data) => {
-        if (data.hasOwnProperty("errorMessage")) {
-          console.error(data);
-          reject(JSON.stringify(data.errorMessage));
-        }
-
-        console.log("data:", data);
-        $.each(data, (i, dataItem) => {
-          if (dataItem.statusCode == 400) {
-            showMessage("An error occurred while deleting " + dataItem.id, true);
+      })
+        .done(data => {
+          if (data.hasOwnProperty("errorMessage")) {
+            console.error(data);
+            reject(JSON.stringify(data.errorMessage));
           }
-        });
 
-        if (data) {
-          resolve(data);
-        } else {
-          console.error("Unknown response:", data);
-        }
-      }).fail((jqXHR, textStatus, errorThrown) => {
-        console.error(jqXHR);
-        console.error(textStatus);
-        console.error(errorThrown);
-        showMessage()
-        reject(errorThrown);
-      });
+          console.log("data:", data);
+          $.each(data, (i, dataItem) => {
+            if (dataItem.statusCode == 400) {
+              showMessage("An error occurred while deleting " + dataItem.id, true);
+            }
+          });
+
+          if (data) {
+            resolve(data);
+          } else {
+            console.error("Unknown response:", data);
+          }
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          console.error(jqXHR);
+          console.error(textStatus);
+          console.error(errorThrown);
+          showMessage();
+          reject(errorThrown);
+        });
     } catch (error) {
       console.error(error);
       reject(error);

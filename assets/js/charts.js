@@ -14,21 +14,16 @@ function generateData(count) {
   var smallBaseValue;
 
   function next(idx) {
-    smallBaseValue = idx % 30 === 0
-      ? Math.random() * 700
-      : (smallBaseValue + Math.random() * 500 - 250);
+    smallBaseValue = idx % 30 === 0 ? Math.random() * 700 : smallBaseValue + Math.random() * 500 - 250;
     baseValue += Math.random() * 20 - 10;
-    return Math.max(
-      0,
-      Math.round(baseValue + smallBaseValue) + 3000
-    );
+    return Math.max(0, Math.round(baseValue + smallBaseValue) + 3000);
   }
 
   var categoryData = [];
   var valueData = [];
 
   for (var i = 0; i < count; i++) {
-    categoryData.push(echarts.format.formatTime('yyyy-MM-dd\nhh:mm:ss', time));
+    categoryData.push(echarts.format.formatTime("yyyy-MM-dd\nhh:mm:ss", time));
     valueData.push(next(i).toFixed(2));
     time += 1000;
   }
@@ -40,37 +35,38 @@ function generateData(count) {
 }
 
 function loadCharts(taskId) {
-
   $("#charts").empty();
   // Test data
   // var dataCount = 5e2;
   // var data = generateData(dataCount);
 
-  getRequestData(taskId).then((data) => {
-    loadChart("Users Logged In (Daily)", "Number of users who logged in daily", data, "users-loggedIn-daily", "bar");
-    loadChart("Users Going On Queue (Daily)", "Number of users going on queue daily", data, "users-onqueue-daily", "bar");
-    loadChart("IVR Data Dips (Daily)", "Number of IVR data dips daily", data, "webservices-datadip", "bar");
-    loadChart("Secure IVR (Daily)", "Number of calls using the Secure IVR for payment purposes", data, "secure-ivr", "bar");
-    loadChart("PureCloud Data Actions (Daily)", "Number of PureCloud data actions being used daily", data, "purecloud-data-actions", "bar");
-    loadChart("AWS Lambda Data Actions (Daily)", "Number of AWS Lambda data actions being used daily", data, "aws-lambda-data-actions", "bar");
-    loadChart("Dialer Outbound Calls (Daily)", "Number of processed dialer outbound calls daily", data, "interactions-dialer", "bar");
-    loadChart("Voice Interactions (Daily)", "Number of inbound and outbound processed calls daily", data, "interactions-call", "bar");
-    loadChart("Callbacks (Daily)", "Number of callback interactions daily", data, "interactions-callback", "bar");
-    loadChart("Emails (Daily)", "Number of email interactions daily", data, "interactions-email", "bar");
-    loadChart("Web Chats (Daily)", "Number of web chat interactions daily", data, "interactions-chat", "bar");
-    loadChart("Co-Browse (Daily)", "Number of co-browse interactions daily", data, "interactions-cobrowse", "bar");
-    loadChart("Screen Shares (Daily)", "Number of screen share session daily", data, "interactions-screenShare", "bar");
-    loadChart("SMS (Daily)", "Number of processed SMS interactions daily", data, "interactions-sms", "bar");
-    loadChart("Messaging (Daily)", "Number of messaging interactions daily", data, "interactions-message", "bar");
-    loadChart("API Calls (Daily)", "Number of daily API calls", data, "api-calls", "bar");
-    loadChart("Salesforce CRM Web Client Connections (Daily)", "Number of connections to the Salesforce CRM Web Client", data, "crm-web-client-salesforce", "bar");
-  }).catch((err) => {
-    console.error(err);
-    if (err.length == 0) {
-      showMessage("No data found for this task. Please wait for a few mins and click on Refresh", true);
-    }
-  });
-
+  getRequestData(taskId)
+    .then(data => {
+      loadChart("Users Logged In (Daily)", "Number of users who logged in daily", data, "users-loggedIn-daily", "bar");
+      loadChart("Users Going On Queue (Daily)", "Number of users going on queue daily", data, "users-onqueue-daily", "bar");
+      loadChart("IVR Data Dips (Daily)", "Number of IVR data dips daily", data, "webservices-datadip", "bar");
+      loadChart("Secure IVR (Daily)", "Number of calls using the Secure IVR for payment purposes", data, "secure-ivr", "bar");
+      loadChart("PureCloud Data Actions (Daily)", "Number of PureCloud data actions being used daily", data, "purecloud-data-actions", "bar");
+      loadChart("AWS Lambda Data Actions (Daily)", "Number of AWS Lambda data actions being used daily", data, "aws-lambda-data-actions", "bar");
+      loadChart("Dialer Outbound Calls (Daily)", "Number of processed dialer outbound calls daily", data, "interactions-dialer", "bar");
+      loadChart("Voice Interactions (Daily)", "Number of inbound and outbound processed calls daily", data, "interactions-call", "bar");
+      loadChart("Callbacks (Daily)", "Number of callback interactions daily", data, "interactions-callback", "bar");
+      loadChart("Emails (Daily)", "Number of email interactions daily", data, "interactions-email", "bar");
+      loadChart("Web Chats (Daily)", "Number of web chat interactions daily", data, "interactions-chat", "bar");
+      loadChart("Co-Browse (Daily)", "Number of co-browse interactions daily", data, "interactions-cobrowse", "bar");
+      loadChart("Screen Shares (Daily)", "Number of screen share session daily", data, "interactions-screenShare", "bar");
+      loadChart("SMS (Daily)", "Number of processed SMS interactions daily", data, "interactions-sms", "bar");
+      loadChart("Messaging (Daily)", "Number of messaging interactions daily", data, "interactions-message", "bar");
+      loadChart("API Calls (Daily)", "Number of daily API calls", data, "api-calls", "bar");
+      loadChart("Salesforce CRM Web Client Connections (Daily)", "Number of connections to the Salesforce CRM Web Client", data, "crm-web-client-salesforce", "bar");
+      loadChart("Zendesk CRM Web Client Connections (Daily)", "Number of connections to the Zendesk CRM Web Client", data, "crm-web-client-zendesk", "bar");
+    })
+    .catch(err => {
+      console.error(err);
+      if (err.length == 0) {
+        showMessage("No data found for this task. Please wait for a few mins and click on Refresh", true);
+      }
+    });
 }
 
 /**
@@ -82,7 +78,6 @@ function loadCharts(taskId) {
  * @param {*} chartType bar, etc.
  */
 function loadChart(title, subtitle, data, category, chartType) {
-
   console.debug(`Checking if data with category ${category}`);
   var matchEntries = data.filter(i => i.category == category);
   if (matchEntries.length == 0) {
@@ -100,7 +95,7 @@ function loadChart(title, subtitle, data, category, chartType) {
     $.each(entry.data, (j, dataEntry) => {
       categoryData.push(echarts.format.formatTime("yyyy-MM-dd", dataEntry.date));
       valueData.push(dataEntry.value);
-    })
+    });
 
     console.log(categoryData);
     console.log(valueData);
@@ -138,24 +133,26 @@ function loadChart(title, subtitle, data, category, chartType) {
             type: "jpeg",
             pixelRatio: 2
           },
-          dataZoom: {
-          }
+          dataZoom: {}
         }
       },
       tooltip: {
-        trigger: 'axis',
+        trigger: "axis",
         axisPointer: {
-          type: 'shadow'
+          type: "shadow"
         }
       },
       grid: {
         bottom: 90
       },
-      dataZoom: [{
-        type: 'inside'
-      }, {
-        type: 'slider'
-      }],
+      dataZoom: [
+        {
+          type: "inside"
+        },
+        {
+          type: "slider"
+        }
+      ],
       xAxis: {
         data: categoryData,
         silent: false,
@@ -171,12 +168,14 @@ function loadChart(title, subtitle, data, category, chartType) {
           show: false
         }
       },
-      series: [{
-        type: chartType,
-        data: valueData,
-        // Set `large` for large data amount
-        large: true
-      }]
+      series: [
+        {
+          type: chartType,
+          data: valueData,
+          // Set `large` for large data amount
+          large: true
+        }
+      ]
     };
 
     // Show chart
