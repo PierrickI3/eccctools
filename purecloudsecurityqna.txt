@@ -1,3 +1,0 @@
-.txt, .docx, .pdf: QnA contained as regular FAQ content, i.e. sequence of questions and answers.
-where are PureCloud recordings stored?: In your region
-What can you do?: a lot of things
