@@ -1,0 +1,62 @@
+body {
+  background-color: #f6f7eb;
+  font-family: "Open Sans", sans-serif;
+}
+h1 {
+  font-family: "Lobster Two", cursive;
+  text-align: center;
+  margin-top: 30px;
+  font-size: 50px;
+  color: #2b3a40;
+}
+.accordion {
+  background-color: #fefffa;
+  max-width: 600px;
+  margin: 50px auto;
+  border-top: 6px solid #7801ff;
+  line-height: 1.6;
+  box-shadow: 5px 5px 10px 0px #a4bac1;
+}
+.accordion__item {
+  border-bottom: 1px solid #dce7eb;
+}
+.accordion__title {
+  padding: 15px 15px 15px 40px;
+  display: block;
+  position: relative;
+  font-weight: 400;
+}
+.accordion__title:before {
+  font-family: FontAwesome;
+  content: "\f055";
+  font-size: 20px;
+  position: absolute;
+  left: 15px;
+  top: 12px;
+  color: #7801ff;
+}
+.accordion__title h5 {
+  border-bottom: 1px solid #fefffa;
+  display: inline-block;
+}
+.accordion__title:hover,
+.accordion__title:focus {
+  cursor: pointer;
+  outline: none;
+}
+.accordion__title:hover h5,
+.accordion__title:focus h5 {
+  border-bottom-color: #a8bdc4;
+  display: inline-block;
+}
+.is-expanded .accordion__title:before {
+  content: "\f056";
+}
+.accordion__content-inner {
+  padding: 0 40px 10px 40px;
+}
+.accordion__content {
+  transition: height 0.3s ease-out;
+  height: 0;
+  overflow: hidden;
+}
