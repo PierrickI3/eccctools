@@ -161,11 +161,17 @@ function loadChart(title, subtitle, data, category, chartType) {
         },
         splitArea: {
           show: false
+        },
+        axisLabel: {
+          fontSize: 10
         }
       },
       yAxis: {
         splitArea: {
           show: false
+        },
+        axisLabel: {
+          fontSize: 10
         }
       },
       series: [
