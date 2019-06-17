@@ -9,6 +9,53 @@ const requestUrl = aebaseurl + "/request";
 
 const stateMachineArn = "arn:aws:states:eu-west-1:715662236651:stateMachine:upsell-startProcess";
 
+//#region PureCloud Connection
+
+function connectToPureCloud(clientId, clientSecret, environment) {
+  console.log(`Connecting to PureCloud... Client Id: ${clientId}, environment: ${environment}`);
+  pureCloudEnvironment = environment;
+  return new Promise((resolve, reject) => {
+    try {
+      $.ajax({
+        url: tokenUrl,
+        method: "POST",
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.setRequestHeader("x-api-key", apiKey);
+        },
+        data: JSON.stringify({
+          clientId: clientId,
+          clientSecret: clientSecret,
+          env: environment
+        })
+      })
+        .done(data => {
+          if (data.hasOwnProperty("errorMessage")) {
+            console.error(data);
+            reject(JSON.stringify(data.errorMessage));
+          } else if (data.hasOwnProperty("token")) {
+            pureCloudToken = data.token;
+            console.log("Token:", pureCloudToken);
+            resolve(pureCloudToken);
+          } else {
+            console.error("Unknown response:", data);
+          }
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          console.error(jqXHR);
+          console.error(textStatus);
+          console.error(errorThrown);
+          reject(error);
+        });
+    } catch (error) {
+      console.error(error);
+      reject(error);
+    }
+  });
+}
+
+//#endregion
+
 //#region AE Upsell
 
 function submitRequest(orgId, startDate, duration, emailAddress, taskId) {
