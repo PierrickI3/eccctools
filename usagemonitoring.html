@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Online Monitoring</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" type="image/png" href="assets/images/icon/favicon.ico" />
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="assets/css/themify-icons.css" />
+    <link rel="stylesheet" href="assets/css/metisMenu.css" />
+    <link rel="stylesheet" href="assets/css/slicknav.min.css" />
+    <link rel="stylesheet" href="assets/css/jquery.toast.min.css" />
+    <!-- others css -->
+    <link rel="stylesheet" href="assets/css/typography.css" />
+    <link rel="stylesheet" href="assets/css/default-css.css" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+    <!-- modernizr css -->
+    <script src="assets/js/vendor/modernizr-2.8.3.min.js"></script>
+  </head>
+
+  <body>
+    <!--[if lt IE 8]>
+      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <!-- preloader area start -->
+    <div id="preloader">
+      <div class="loader"></div>
+    </div>
+    <!-- preloader area end -->
+    <!-- page container area start -->
+    <div class="page-container">
+      <!-- sidebar menu area start -->
+      <div class="sidebar-menu">
+        <div class="sidebar-header">
+          <a class="navbar-brand" href="/eccctools">
+            <span><i class="wi wi-sunset"></i> EC<sup>3</sup> Tools</span>
+          </a>
+        </div>
+        <div class="main-menu">
+          <div class="menu-inner">
+            <nav>
+              <ul class="metismenu" id="menu">
+                <li class="active">
+                  <a href="javascript:void(0)" aria-expanded="true"><i class="ti-desktop"></i><span>PureCloud Utilities</span></a>
+                  <ul class="collapse">
+                    <li class="active bg-secondary"><a href="usagemonitoring.html">Usage Monitoring</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <!-- sidebar menu area end -->
+      <!-- main content area start -->
+      <div class="main-content">
+        <!-- header area start -->
+        <div class="header-area">
+          <div class="row align-items-center">
+            <!-- nav and search button -->
+            <div class="col-md-6 col-sm-8 clearfix">
+              <div class="nav-btn pull-left">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+            <!-- profile info & task notification -->
+            <div class="col-md-6 col-sm-4 clearfix">
+              <ul class="notification-area pull-right">
+                <li id="full-view"><i class="ti-fullscreen"></i></li>
+                <li id="full-view-exit"><i class="ti-zoom-out"></i></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- header area end -->
+        <!-- page title area start -->
+        <div class="page-title-area">
+          <div class="row align-items-center">
+            <div class="col-sm-6">
+              <div class="breadcrumbs-area clearfix">
+                <h4 class="page-title pull-left">Usage Monitoring</h4>
+                <ul class="breadcrumbs pull-left">
+                  <li><a href="index.html">Home</a></li>
+                  <li><span class="active">Usage Monitoring</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- page title area end -->
+        <div class="main-content-inner">
+          <div class="mt-5 mb-5 card card-bordered">
+            <div class="card-body text-center">
+              <p>Monitor the usage of multiple organizations</p>
+              <p>Useful if your company is spread over multiple organizations and you want to monitor the usage</p>
+            </div>
+          </div>
+          <div class="mt-5 mb-5 card card-bordered">
+            <div class="card-body">
+              <h4 class="header-title">PureCloud Connection</h4>
+              <p class="form-text text-muted">Populate all fields below then click on <code>Add Credentials</code>. Credentials are stored in your own browser and only used when needed.</p>
+              <p class="form-text text-muted">When finished, click on <code>Go!</code> to get the organizations usage.</p>
+              <br />
+              <div class="mb-2">
+                <button id="addCredentials" class="btn btn-info" data-toggle="modal" data-target="#credentials-modal"><i class="fa fa-plus"></i> Add Credentials</button>
+              </div>
+              <div id="credentials-modal" class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Add a PureCloud Organization</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form id="connectionform">
+                        <div class="form-group">
+                          <label for="clientId">Client Id</label>
+                          <input type="text" class="form-control" required name="clientId" id="clientId" placeholder="Enter your client id" value="946f15df-1538-4f69-af29-48b77bf80e6b" />
+                        </div>
+                        <div class="form-group">
+                          <label for="clientSecret">Client Secret</label>
+                          <input type="password" class="form-control" required name="clientSecret" id="clientSecret" placeholder="Enter your client secret" value="MQMAxbcIHmaqJV96Yzc8qkO0fYtIvZ-G6jAcflb1IXg" />
+                        </div>
+                        <div class="form-group">
+                          <label for="environment">PureCloud Environment</label>
+                          <select class="form-control" style="height: 45px" required name="environment" id="environment">
+                            <option selected value="mypurecloud.ie" selected>mypurecloud.ie (Ireland)</option>
+                            <option value="mypurecloud.com">mypurecloud.com (US)</option>
+                            <option value="mypurecloud.de">mypurecloud.de (Germany)</option>
+                            <option value="mypurecloud.com.au">mypurecloud.com.au (Australia/New Zealand)</option>
+                            <option value="mypurecloud.jp">mypurecloud.jp (Japan)</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="committed">Committed Number (optional)</label>
+                          <input type="text" class="form-control" required name="committed" id="committed" value="0" />
+                        </div>
+                        <div class="mt-2">
+                          <div id="error"><span class="text-danger"></span></div>
+                          <div id="success"><span class="text-success"></span></div>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button id="connect" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Connecting" class="btn btn-success"><i class="ti-unlock"></i> Test & Save</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <div>
+                <p>Current Credentials</p>
+                <table id="current-credentials" class="mt-1 table table-hover table-bordered table-responsive">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th scope="col" class="text-center">Client Id</th>
+                      <th scope="col" class="text-center">Environment</th>
+                      <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="credentials-body">
+                    <!-- New rows will be added here with javascript (see scripts below) -->
+                  </tbody>
+                </table>
+                <div class="mt-2 form-group">
+                  <button id="start-monitoring" class="btn btn-success" disabled>Start Monitoring</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 mb-5 card card-bordered" id="pureCloudOrgUsage">
+            <div class="card-body">
+              <h4 class="header-title">PureCloud Usage</h4>
+              <button id="refresh-all" type="button" class="btn btn-info"><i id="refresh-all-icon"></i> Refresh</button>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="refreshCheck" />
+                <label class="form-check-label" for="refreshCheck">
+                  Refresh every 30 seconds
+                </label>
+              </div>
+              <table id="org-usage" class="mt-5 table table-hover table-bordered table-responsive text-center">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" rowspan="2" style="vertical-align : middle;">Organization</th>
+                    <th scope="col" colspan="2">Users</th>
+                    <th scope="col" rowspan="2" style="vertical-align : middle;">Licenses</th>
+                  </tr>
+                  <tr id="sub-headers">
+                    <th scope="col" class="do-not-remove">Logged In</th>
+                    <th scope="col" class="do-not-remove">Committed</th>
+                  </tr>
+                </thead>
+                <tbody id="table-body">
+                  <!-- New rows will be added here with javascript (see scripts below) -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- main content area end -->
+      <!-- footer area start-->
+      <footer>
+        <div class="footer-area">
+          <p>© Copyright Genesys 2019. All rights reserved.</p>
+        </div>
+      </footer>
+      <!-- footer area end-->
+    </div>
+    <!-- page container area end -->
+    <!-- jquery latest version -->
+    <script src="assets/js/vendor/jquery-2.2.4.min.js"></script>
+    <!-- bootstrap 4 js -->
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/owl.carousel.min.js"></script>
+    <script src="assets/js/metisMenu.min.js"></script>
+    <script src="assets/js/jquery.slimscroll.min.js"></script>
+    <script src="assets/js/jquery.slicknav.min.js"></script>
+
+    <!-- jQuery Toast -->
+    <script src="assets/js/jquery.toast.min.js"></script>
+    <!-- others plugins -->
+    <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/scripts.js"></script>
+    <!-- This page's scripts -->
+    <script src="assets/js/aws.js"></script>
+    <script src="assets/js/notifications.js"></script>
+    <script src="assets/js/sweetalert.min.js"></script>
+    <script src="assets/js/jquery.validate.min.js"></script>
+    <script src="assets/js/additional-methods.min.js"></script>
+
+    <script>
+      async function processOrgs() {
+        var orgs = JSON.parse(localStorage.getItem("credentials"));
+
+        for (const org of orgs) {
+          await processOrg(org);
+        }
+        console.log("Done!");
+        clearLoading("#connect"); // Stop showing spinner on Connect button
+        removeSpinner("#refresh-all-icon");
+      }
+
+      async function processOrg(org) {
+        var response = await getOrgInfo(org);
+        console.debug("Response:", response);
+
+        // Compile organization info
+        let orgInfo = {};
+
+        // Org Name
+        orgInfo.orgName = response.orgName;
+
+        // Logged In
+        orgInfo.loggedIn = 0;
+        await $.each(response.entities, (index, entity) => {
+          orgInfo.loggedIn = entity.status !== "Offline" ? orgInfo.loggedIn + 1 : orgInfo.loggedIn;
+        });
+        console.debug(`Org (${orgInfo.orgName}) - Logged In: ${orgInfo.loggedIn}`);
+
+        // Committed
+        orgInfo.committed = org.committed;
+
+        // Licenses
+        orgInfo.licenses = [];
+        var licensesCount = {};
+        // Loop through each user to go through assigned licenses
+        for (let index = 0; index < response.entities.length; index++) {
+          const currentLicenses = response.entities[index].licenses;
+          // Count each license for current user
+          for (let licenseIndex = 0; licenseIndex < currentLicenses.length; licenseIndex++) {
+            const currentLicense = currentLicenses[licenseIndex];
+            licensesCount[currentLicense] = licensesCount[currentLicense] ? licensesCount[currentLicense] + 1 : 1;
+          }
+        }
+        orgInfo.licenses = JSON.parse(JSON.stringify(licensesCount));
+        console.debug("OrgInfo.licenses: ", orgInfo.licenses);
+
+        // Populate table
+        showOrg(orgInfo);
+      }
+
+      //#region Loading Effects
+
+      function setLoading(button) {
+        var search = $(button);
+        if (!search.data("normal-text")) {
+          search.data("normal-text", search.html());
+        }
+        search.html(search.data("loading-text"));
+      }
+      function clearLoading(button) {
+        var search = $(button);
+        search.html(search.data("normal-text"));
+      }
+      function addSpinner(control) {
+        $("#org-usage").addClass("loading");
+      }
+      function removeSpinner(control) {
+        $("#org-usage").removeClass("loading");
+      }
+
+      //#endregion
+
+      //#region Init & Form Validation
+      $("#pureCloudOrgUsage").hide();
+
+      $("#connectionform").validate({
+        errorClass: "text-danger border border-danger",
+        validClass: "",
+        invalidHandler: function(event, validator) {
+          var errors = validator.numberOfInvalids();
+          if (errors) {
+            var message = errors == 1 ? "You missed 1 field. It has been highlighted" : "You missed " + errors + " fields. They have been highlighted";
+            $("#connectionform #error span").html(message);
+            console.error(message);
+            $("#connectionform #error").show();
+          }
+        }
+      });
+
+      //#endregion
+
+      //#region Connection
+
+      $("#connect").click(e => {
+        e.preventDefault();
+
+        if ($("#connectionform").valid()) {
+          setLoading("#connect"); // Show spinner on Connect button
+
+          connectToPureCloud(
+            $("#clientId").val(),
+            $("#clientSecret").val(),
+            $("#environment")
+              .children("option:selected")
+              .val()
+          )
+            .then(token => {
+              clearLoading("#connect"); // Hide spinner on Connect button
+
+              // Update credentials
+              var currentCredentials = localStorage.getItem("credentials") ? JSON.parse(localStorage.getItem("credentials")) : [];
+              var foundCredential = currentCredentials.find(credential => credential.clientId === $("#clientId").val());
+
+              if (!foundCredential) {
+                localStorage.removeItem("credentials");
+                currentCredentials.push({
+                  clientId: $("#clientId").val(),
+                  clientSecret: $("#clientSecret").val(),
+                  environment: $("#environment")
+                    .children("option:selected")
+                    .val(),
+                  committed: $("#committed").val()
+                });
+                localStorage.setItem("credentials", JSON.stringify(currentCredentials));
+              } else {
+                $("#connectionform #error span").html(`Client id ${$("#clientId").val()} is already in the list of current credentials`);
+                $("#connectionform #error").show();
+                return;
+              }
+
+              refreshCredentialsList();
+
+              // Update controls
+              showMessage("Success!");
+              $("#connectionform #success span").html("Connection succeeded. Credentials added.");
+              $("#connectionform #success").show();
+            })
+            .catch(error => {
+              console.error(error);
+              showMessage(error, true);
+              $("#connectionform #error span").html(`An error occurred while connecting to PureCloud. Please check your credentials`);
+              $("#connectionform #error").show();
+              clearLoading("#connect"); // Stop showing spinner on Connect button
+              $("#pureCloudOrgUsage").hide();
+            });
+        }
+      });
+
+      $("#credentials-modal").on("hidden.bs.modal", function() {
+        // Clear values
+        $("#clientId").val("");
+        $("#clientSecret").val("");
+
+        // Clear errors
+        $("#connectionform #error span").html("");
+        $("#connectionform #error").hide();
+
+        // Clear connection success
+        $("#connectionform #success span").html("");
+        $("#connectionform #success").hide();
+      });
+
+      function refreshCredentialsList() {
+        $("#credentials-body").empty();
+        var currentCredentials = JSON.parse(localStorage.getItem("credentials"));
+
+        $.each(currentCredentials, (i, currentCredential) => {
+          var row = $("<tr/>").appendTo("#credentials-body");
+          $("<td/>")
+            .text(currentCredential.clientId)
+            .appendTo(row);
+          $("<td/>")
+            .text(currentCredential.environment)
+            .appendTo(row);
+          var actionsCell = $("<td/>").appendTo(row);
+          var actions = $("<button/>", { type: "button", class: "btn-small btn-danger" })
+            .text("Delete")
+            .appendTo(actionsCell)
+            .on("click", () => {
+              removeCredential(currentCredential.clientId, currentCredential.clientSecret, currentCredential.environment);
+            });
+        });
+        $("#start-monitoring").prop("disabled", currentCredentials.length === 0);
+      }
+
+      function removeCredential(clientId, clientSecret, environment) {
+        var currentCredentials = JSON.parse(localStorage.getItem("credentials"));
+        var filtered = currentCredentials.filter(cred => cred.clientId != clientId && cred.clientSecret != clientSecret);
+        localStorage.setItem("credentials", JSON.stringify(filtered));
+        refreshCredentialsList();
+      }
+
+      refreshCredentialsList();
+
+      //#endregion
+
+      //#region Refresh
+
+      $("#refresh-all").click(() => {
+        refresh();
+      });
+
+      function refresh() {
+        $("#sub-headers")
+          .children()
+          .each((i, subHeader) => {
+            if (!$(subHeader).hasClass("do-not-remove")) {
+              subHeader.remove();
+            }
+          });
+        loadOrgsUsage();
+      }
+
+      $("#refreshCheck").change(() => {
+        if ($("#refreshCheck").prop("checked")) {
+          console.log("Starting loop");
+          startLoop();
+        } else {
+          console.log("Stopping loop");
+          stopLoop();
+        }
+      });
+
+      var keepGoing = true;
+      function refreshLoop() {
+        //refresh();
+        if (keepGoing) {
+          setInterval(refresh, 30000);
+        }
+      }
+
+      function startLoop() {
+        keepGoing = true;
+        refreshLoop();
+      }
+
+      function stopLoop() {
+        keepGoing = false;
+      }
+
+      //#endregion
+
+      //#region Table functions
+
+      // Start Monitoring
+      $("#start-monitoring").click(() => {
+        loadOrgsUsage();
+      });
+
+      function loadOrgsUsage() {
+        // Init
+        orgsInfo = {};
+        $("#pureCloudOrgUsage").show(); // Show table
+        $("#table-body").empty(); // Clear all rows
+        addSpinner("#refresh-all-icon"); // Show spinner
+
+        // Go!
+        processOrgs();
+      }
+
+      async function getOrgInfo(org) {
+        return new Promise(async (resolve, reject) => {
+          console.log("Adding org info for", org.clientId);
+          try {
+            const response = await $.ajax({
+              method: "POST",
+              url: "https://9i9vjyl70c.execute-api.eu-west-1.amazonaws.com/dev/getdata",
+              headers: {
+                "x-api-key": "CovgPVCcHJ60ZGtdGCdMqaCC28qKVW0M1MYm2Qhs",
+                "Content-Type": "application/json"
+              },
+              data: JSON.stringify({
+                clientId: org.clientId,
+                clientSecret: org.clientSecret,
+                env: org.environment,
+                token: org.token,
+                mergeOutput: true
+              })
+            });
+            console.log("Returning response...");
+            resolve(response);
+          } catch (error) {
+            console.error(error);
+            reject(error);
+          }
+        });
+      }
+
+      function showOrg(orgInfo) {
+        console.log("showOrgs - Org Info:", orgInfo);
+        var row = $("<tr/>").appendTo("#table-body");
+        $("<td/>", { class: "text-center" })
+          .text(orgInfo.orgName)
+          .appendTo(row);
+        var loggedInCell = $("<td/>", { class: "text-center" })
+          .text(orgInfo.loggedIn)
+          .appendTo(row);
+        if (orgInfo.loggedIn >= orgInfo.committed && orgInfo.committed > 0) {
+          loggedInCell.addClass("text-white bg-danger");
+        } else {
+          loggedInCell.removeClass("text-white bg-danger");
+        }
+        $("<td/>", { class: "text-center" })
+          .text(orgInfo.committed)
+          .appendTo(row);
+
+        console.log("Licenses:", orgInfo.licenses);
+        var joinedLicenses = "";
+        $.each(Object.keys(orgInfo.licenses), (i, licenseName) => {
+          joinedLicenses += licenseName + ":" + orgInfo.licenses[licenseName] + "\n\r";
+        });
+        joinedLicenses = joinedLicenses.substring(0, joinedLicenses.length - 1); // Remove the last line break
+        $("<td/>", { class: "text-center", style: "white-space:pre-wrap; word-wrap:break-word" })
+          .text(joinedLicenses)
+          .appendTo(row);
+      }
+      //#endregion
+    </script>
+  </body>
+</html>
