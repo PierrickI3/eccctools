@@ -194,7 +194,7 @@
                   <tr>
                     <th scope="col" rowspan="2" style="vertical-align : middle;">Organization</th>
                     <th scope="col" colspan="2">Users</th>
-                    <th scope="col" colspan="2">Licenses</th>
+                    <th scope="col" colspan="2">Assigned Licenses</th>
                   </tr>
                   <tr id="sub-headers">
                     <th scope="col" class="do-not-remove">Logged In</th>
@@ -263,32 +263,39 @@
         let orgInfo = {};
 
         // Org Name
-        orgInfo.orgName = response.orgName;
+        orgInfo.orgName = response.orgName || org.clientId;
+
+        // Committed
+        orgInfo.committed = org.committed;
 
         // Logged In
         orgInfo.loggedIn = 0;
         await $.each(response.entities, (index, entity) => {
           orgInfo.loggedIn = entity.status !== "Offline" ? orgInfo.loggedIn + 1 : orgInfo.loggedIn;
         });
+        if (!response.entities) {
+          orgInfo.loggedIn = 0;
+          showMessage(`No data found for: ${org.clientId}`, true);
+          //return;
+        }
         console.debug(`Org (${orgInfo.orgName}) - Logged In: ${orgInfo.loggedIn}`);
-
-        // Committed
-        orgInfo.committed = org.committed;
 
         // Licenses
         orgInfo.licenses = [];
         var licensesCount = {};
         // Loop through each user to go through assigned licenses
-        for (let index = 0; index < response.entities.length; index++) {
-          const currentLicenses = response.entities[index].licenses;
-          // Count each license for current user
-          for (let licenseIndex = 0; licenseIndex < currentLicenses.length; licenseIndex++) {
-            const currentLicense = currentLicenses[licenseIndex];
-            licensesCount[currentLicense] = licensesCount[currentLicense] ? licensesCount[currentLicense] + 1 : 1;
+        if (response.entities) {
+          for (let index = 0; index < response.entities.length; index++) {
+            const currentLicenses = response.entities[index].licenses;
+            // Count each license for current user
+            for (let licenseIndex = 0; licenseIndex < currentLicenses.length; licenseIndex++) {
+              const currentLicense = currentLicenses[licenseIndex];
+              licensesCount[currentLicense] = licensesCount[currentLicense] ? licensesCount[currentLicense] + 1 : 1;
+            }
           }
+          orgInfo.licenses = JSON.parse(JSON.stringify(licensesCount));
+          console.debug("OrgInfo.licenses: ", orgInfo.licenses);
         }
-        orgInfo.licenses = JSON.parse(JSON.stringify(licensesCount));
-        console.debug("OrgInfo.licenses: ", orgInfo.licenses);
 
         // Populate table
         showOrg(orgInfo);
