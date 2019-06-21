@@ -186,16 +186,21 @@
                   Refresh every 30 seconds
                 </label>
               </div>
+              <div class="text-danger mt-3">
+                <h5>DISCLAIMER: The values shown in the table below are calculated on the fly using PureCloud API functions and are only indicative.</h5>
+              </div>
               <table id="org-usage" class="mt-5 table table-hover table-bordered table-responsive text-center">
                 <thead class="thead-light">
                   <tr>
                     <th scope="col" rowspan="2" style="vertical-align : middle;">Organization</th>
                     <th scope="col" colspan="2">Users</th>
-                    <th scope="col" rowspan="2" style="vertical-align : middle;">Licenses</th>
+                    <th scope="col" colspan="2">Licenses</th>
                   </tr>
                   <tr id="sub-headers">
                     <th scope="col" class="do-not-remove">Logged In</th>
                     <th scope="col" class="do-not-remove">Committed</th>
+                    <th scope="col" class="do-not-remove">Name</th>
+                    <th scope="col" class="do-not-remove">Count</th>
                   </tr>
                 </thead>
                 <tbody id="table-body">
@@ -373,12 +378,16 @@
 
               // Update controls
               showMessage("Success!");
+              $("#connectionform #error span").html("");
+              $("#connectionform #error").hide();
               $("#connectionform #success span").html("Connection succeeded. Credentials added.");
               $("#connectionform #success").show();
             })
             .catch(error => {
               console.error(error);
               showMessage(error, true);
+              $("#connectionform #success span").html("");
+              $("#connectionform #success").hide();
               $("#connectionform #error span").html(`An error occurred while connecting to PureCloud. Please check your credentials`);
               $("#connectionform #error").show();
               clearLoading("#connect"); // Stop showing spinner on Connect button
@@ -421,7 +430,7 @@
               removeCredential(currentCredential.clientId, currentCredential.clientSecret, currentCredential.environment);
             });
         });
-        $("#start-monitoring").prop("disabled", currentCredentials.length === 0);
+        $("#start-monitoring").prop("disabled", currentCredentials ? currentCredentials.length === 0 : true);
       }
 
       function removeCredential(clientId, clientSecret, environment) {
@@ -454,10 +463,10 @@
 
       $("#refreshCheck").change(() => {
         if ($("#refreshCheck").prop("checked")) {
-          console.log("Starting loop");
+          console.debug("Starting loop");
           startLoop();
         } else {
-          console.log("Stopping loop");
+          console.debug("Stopping loop");
           stopLoop();
         }
       });
@@ -518,7 +527,7 @@
                 mergeOutput: true
               })
             });
-            console.log("Returning response...");
+            console.debug("Returning response:", response);
             resolve(response);
           } catch (error) {
             console.error(error);
@@ -528,12 +537,12 @@
       }
 
       function showOrg(orgInfo) {
-        console.log("showOrgs - Org Info:", orgInfo);
+        console.debug("showOrgs - Org Info:", orgInfo);
         var row = $("<tr/>").appendTo("#table-body");
-        $("<td/>", { class: "text-center" })
+        $("<td/>", { class: "text-center", rowspan: Object.keys(orgInfo.licenses).length })
           .text(orgInfo.orgName)
           .appendTo(row);
-        var loggedInCell = $("<td/>", { class: "text-center" })
+        var loggedInCell = $("<td/>", { class: "text-center", rowspan: Object.keys(orgInfo.licenses).length })
           .text(orgInfo.loggedIn)
           .appendTo(row);
         if (orgInfo.loggedIn >= orgInfo.committed && orgInfo.committed > 0) {
@@ -541,19 +550,33 @@
         } else {
           loggedInCell.removeClass("text-white bg-danger");
         }
-        $("<td/>", { class: "text-center" })
+        $("<td/>", { class: "text-center", rowspan: Object.keys(orgInfo.licenses).length })
           .text(orgInfo.committed)
           .appendTo(row);
 
-        console.log("Licenses:", orgInfo.licenses);
-        var joinedLicenses = "";
+        console.debug("Licenses:", orgInfo.licenses);
+        //var licensesColumn = $("<td/>", { class: "text-center", style: "white-space:pre-wrap; word-wrap:break-word" }).appendTo(row);
         $.each(Object.keys(orgInfo.licenses), (i, licenseName) => {
-          joinedLicenses += licenseName + ":" + orgInfo.licenses[licenseName] + "\n\r";
+          console.debug(licenseName + ":" + orgInfo.licenses[licenseName]);
+          if (i === 0) {
+            // Add to current row
+            $("<td/>", { class: "text-center" })
+              .text(licenseName)
+              .appendTo(row);
+            $("<td/>", { class: "text-center" })
+              .text(orgInfo.licenses[licenseName])
+              .appendTo(row);
+          } else {
+            // Add to new row
+            var newRow = $("<tr/>").appendTo("#table-body");
+            $("<td/>", { class: "text-center" })
+              .text(licenseName)
+              .appendTo(newRow);
+            $("<td/>", { class: "text-center" })
+              .text(orgInfo.licenses[licenseName])
+              .appendTo(newRow);
+          }
         });
-        joinedLicenses = joinedLicenses.substring(0, joinedLicenses.length - 1); // Remove the last line break
-        $("<td/>", { class: "text-center", style: "white-space:pre-wrap; word-wrap:break-word" })
-          .text(joinedLicenses)
-          .appendTo(row);
       }
       //#endregion
     </script>
