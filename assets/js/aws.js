@@ -9,6 +9,8 @@ const requestUrl = aebaseurl + "/request";
 
 const stateMachineArn = "arn:aws:states:eu-west-1:715662236651:stateMachine:upsell-startProcess";
 
+const jobsUrl = "https://bulkdownloader.azurewebsites.net/job";
+
 //#region PureCloud Connection
 
 function connectToPureCloud(clientId, clientSecret, environment) {
@@ -19,7 +21,7 @@ function connectToPureCloud(clientId, clientSecret, environment) {
       $.ajax({
         url: tokenUrl,
         method: "POST",
-        beforeSend: function(xhr) {
+        beforeSend: function (xhr) {
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.setRequestHeader("x-api-key", apiKey);
         },
@@ -60,7 +62,7 @@ function connectToPureCloud(clientId, clientSecret, environment) {
 
 function submitRequest(orgId, startDate, duration, emailAddress, taskId) {
   console.log("Submitting Request...");
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     try {
       var options = {
         async: true,
@@ -100,7 +102,7 @@ function submitRequest(orgId, startDate, duration, emailAddress, taskId) {
 
 function getRequestData(taskId) {
   console.log(`Getting Request (${taskId})...`);
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     try {
       var options = {
         async: true,
@@ -147,7 +149,7 @@ function getItems(type) {
       $.ajax({
         url: actionUrl,
         method: "POST",
-        beforeSend: function(xhr) {
+        beforeSend: function (xhr) {
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.setRequestHeader("x-api-key", apiKey);
         },
@@ -187,7 +189,7 @@ function deleteItems(type, items) {
       $.ajax({
         url: actionUrl,
         method: "POST",
-        beforeSend: function(xhr) {
+        beforeSend: function (xhr) {
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.setRequestHeader("x-api-key", apiKey);
         },
@@ -230,6 +232,55 @@ function deleteItems(type, items) {
       reject(error);
     }
   });
+}
+
+//#endregion
+
+//#region Recordings
+
+async function createJob(environment, clientId, clientSecret, intervalFrom, intervalTo) {
+  return await $.ajax({
+    url: jobsUrl,
+    method: "POST",
+    beforeSend: function (xhr) {
+      xhr.setRequestHeader("Content-Type", "application/json");
+    },
+    data: JSON.stringify({
+      env: environment,
+      clientId: clientId,
+      clientSecret: clientSecret,
+      intervalFrom: intervalFrom,
+      intervalTo: intervalTo
+    })
+  })
+    .done(data => {
+      return data;
+    })
+    .fail((jqXHR, textStatus, errorThrown) => {
+      console.error(jqXHR);
+      console.error(textStatus);
+      console.error(errorThrown);
+      return new Error(errorThrown);
+    });
+}
+
+async function getJob(jobId) {
+  return await $.ajax({
+    url: `${jobsUrl}?jobId=${jobId}`,
+    method: "GET",
+    beforeSend: function (xhr) {
+      xhr.setRequestHeader("Content-Type", "application/json");
+    }
+  })
+    .done(data => {
+      return data;
+    })
+    .fail((jqXHR, textStatus, errorThrown) => {
+      console.error(jqXHR);
+      console.error(textStatus);
+      console.error(errorThrown);
+      return new Error(errorThrown);
+    });
 }
 
 //#endregion

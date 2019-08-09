@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>PureClean</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" type="image/png" href="assets/images/icon/favicon.ico" />
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="assets/css/themify-icons.css" />
+  <link rel="stylesheet" href="assets/css/metisMenu.css" />
+  <link rel="stylesheet" href="assets/css/slicknav.min.css" />
+  <link rel="stylesheet" href="assets/css/jquery.toast.min.css" />
+  <!-- others css -->
+  <link rel="stylesheet" href="assets/css/typography.css" />
+  <link rel="stylesheet" href="assets/css/default-css.css" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <!-- modernizr css -->
+  <script src="assets/js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+
+<body>
+  <!--[if lt IE 8]>
+      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+  <!-- preloader area start -->
+  <div id="preloader">
+    <div class="loader"></div>
+  </div>
+  <!-- preloader area end -->
+  <!-- page container area start -->
+  <div class="page-container">
+    <!-- sidebar menu area start -->
+    <div class="sidebar-menu">
+      <div class="sidebar-header">
+        <a class="navbar-brand" href="/eccctools">
+          <span><i class="wi wi-sunset"></i> EC<sup>3</sup> Tools</span>
+        </a>
+      </div>
+      <div class="main-menu">
+        <div class="menu-inner">
+          <nav>
+            <ul class="metismenu" id="menu">
+              <li class="active">
+                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-desktop"></i><span>PureCloud Utilities</span></a>
+                <ul class="collapse">
+                  <li class="active bg-secondary"><a href="recordings.html">Recordings</a></li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <!-- sidebar menu area end -->
+    <!-- main content area start -->
+    <div class="main-content">
+      <!-- header area start -->
+      <div class="header-area">
+        <div class="row align-items-center">
+          <!-- nav and search button -->
+          <div class="col-md-6 col-sm-8 clearfix">
+            <div class="nav-btn pull-left">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <!-- profile info & task notification -->
+          <div class="col-md-6 col-sm-4 clearfix">
+            <ul class="notification-area pull-right">
+              <li id="full-view"><i class="ti-fullscreen"></i></li>
+              <li id="full-view-exit"><i class="ti-zoom-out"></i></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- header area end -->
+      <!-- page title area start -->
+      <div class="page-title-area">
+        <div class="row align-items-center">
+          <div class="col-sm-6">
+            <div class="breadcrumbs-area clearfix">
+              <h4 class="page-title pull-left">PureClean</h4>
+              <ul class="breadcrumbs pull-left">
+                <li><a href="index.html">Home</a></li>
+                <li><span class="active">PureClean</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- page title area end -->
+      <div class="main-content-inner">
+        <div class="mt-5 mb-5 card card-bordered">
+          <div class="card-body text-center">
+            <p>Download recordings from your PureCloud organization</p>
+            <p>Useful if you need to download a bunch of recordings and have them available locally</p>
+            <p>
+              <i>Warning: This is a <b>BETA</b> version and work is still in progress</i>
+            </p>
+          </div>
+        </div>
+        <div class="mt-5 mb-5 card card-bordered">
+          <div class="card-body">
+            <form id="connectionform">
+              <h4 class="header-title">PureCloud Connection</h4>
+              <small class="form-text text-muted">Populate all fields below then click on <code>Start</code></small><br />
+              <div class="form-group row">
+                <div class="col-4">
+                  <label for="clientId">Client Id</label>
+                  <input required type="text" class="form-control" required name="clientId" id="clientId" placeholder="Enter your client id" value="a49ab989-0802-40a6-8c95-da1b6a44ecf0" />
+                </div>
+                <div class="col-4">
+                  <label for="clientSecret">Client Secret</label>
+                  <input required type="password" class="form-control" required name="clientSecret" id="clientSecret" placeholder="Enter your client secret" value="4p5mgg6ooH80DNqRj2Xro51VtO87YyhgBe323TaVIVk" />
+                </div>
+                <div class="col-3">
+                  <label for="environment">PureCloud Environment</label>
+                  <select required class="form-control" style="height: 45px" required name="environment" id="environment">
+                    <option value="mypurecloud.ie" selected>mypurecloud.ie (Ireland)</option>
+                    <option value="mypurecloud.com">mypurecloud.com (US)</option>
+                    <option value="mypurecloud.de">mypurecloud.de (Germany)</option>
+                    <option value="mypurecloud.com.au">mypurecloud.com.au (Australia/New Zealand)</option>
+                    <option value="mypurecloud.jp">mypurecloud.jp (Japan)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-3">
+                  <label for="startDate">Start Date/Time</label>
+                  <input required class="form-control" type="date" id="startDate" value="2019-08-01" />
+                </div>
+                <div class="col-3">
+                  <label for="endDate">End Date/Time</label>
+                  <input required class="form-control" type="date" id="endDate" value="2019-08-08" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-3">
+                  <label for="queueNames">Queue Names</label>
+                  <input class="form-control" type="text" id="queueNames" value="AllAgents, Apple" />
+                </div>
+                <div class="col-3">
+                  <label for="email">Email Address</label>
+                  <input class="form-control" type="text" id="email" value="pierrick.lozach@genesys.com" />
+                </div>
+              </div>
+              <div>
+                <div id="error"><span class="text-danger"></span></div>
+                <div id="success"><span class="text-success"></span></div>
+                <button id="connect" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing Request" class="btn btn-primary"><i class="ti-unlock"></i> Start</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="mt-5 mb-5 card card-bordered" id="pureCloudObjects">
+          <div class="card-body">
+            <h4 class="header-title">PureCloud Recordings Jobs</h4>
+            <small class="text-muted">Please wait while all jobs are being processed</small>
+            <button id="refresh-all" type="button" class="btn btn-info">Refresh All</button>
+            <div id="purecloudaccordion" class="accordion accordion-s3 mt-3">
+              <!-- Jobs -->
+              <div id="jobs"></div>
+            </div>
+          </div>
+        </div>
+        <!-- main content area end -->
+        <!-- footer area start-->
+        <footer>
+          <div class="footer-area">
+            <p>© Copyright Genesys 2019. All rights reserved.</p>
+          </div>
+        </footer>
+        <!-- footer area end-->
+      </div>
+      <!-- page container area end -->
+      <!-- jquery latest version -->
+      <script src="assets/js/vendor/jquery-2.2.4.min.js"></script>
+      <!-- bootstrap 4 js -->
+      <script src="assets/js/popper.min.js"></script>
+      <script src="assets/js/bootstrap.min.js"></script>
+      <script src="assets/js/owl.carousel.min.js"></script>
+      <script src="assets/js/metisMenu.min.js"></script>
+      <script src="assets/js/jquery.slimscroll.min.js"></script>
+      <script src="assets/js/jquery.slicknav.min.js"></script>
+
+      <!-- jQuery Toast -->
+      <script src="assets/js/jquery.toast.min.js"></script>
+      <!-- others plugins -->
+      <script src="assets/js/plugins.js"></script>
+      <script src="assets/js/scripts.js"></script>
+      <!-- This page's scripts -->
+      <script src="assets/js/aws.js"></script>
+      <script src="assets/js/notifications.js"></script>
+      <script src="assets/js/sweetalert.min.js"></script>
+      <script src="assets/js/jquery.validate.min.js"></script>
+      <script src="assets/js/additional-methods.min.js"></script>
+
+      <script>
+        var jobs = [];
+
+        var setLoading = function (button) {
+          var search = $(button);
+          if (!search.data("normal-text")) {
+            search.data("normal-text", search.html());
+          }
+          search.html(search.data("loading-text"));
+        };
+
+        var clearLoading = function (button) {
+          var search = $(button);
+          search.html(search.data("normal-text"));
+        };
+
+        // Init
+        $("#pureCloudObjects").hide();
+
+        $("#connectionform").validate({
+          errorClass: "text-danger border border-danger",
+          validClass: "",
+          invalidHandler: function (event, validator) {
+            var errors = validator.numberOfInvalids();
+            if (errors) {
+              var message = errors == 1 ? "You missed 1 field. It has been highlighted" : "You missed " + errors + " fields. They have been highlighted";
+              $("#connectionform #error span").html(message);
+              console.error(message);
+              $("#connectionform #error").show();
+            }
+          }
+        });
+
+        // Connect to PureCloud Button
+        $("#connect").click(() => {
+          event.preventDefault();
+
+          if ($("#connectionform").valid()) {
+            setLoading("#connect"); // Stop showing spinner on Connect button
+
+            // Clear errors
+            $("#connectionform #error span").html("");
+            $("#connectionform #error").hide();
+
+            // Clear connection success
+            $("#connectionform #success span").html("");
+            $("#connectionform #success").hide();
+
+            connectToPureCloud($("#clientId").val(), $("#clientSecret").val(), $("#environment").children("option:selected").val()
+            )
+              .then(token => {
+                $("#pureCloudObjects").show();
+                showMessage("Please wait while all recordings are being retrieved...");
+                createRecordingJob();
+              })
+              .catch(error => {
+                console.error(error);
+                showMessage(error, true);
+                clearLoading("#connect"); // Stop showing spinner on Connect button
+                $("#pureCloudObjects").hide();
+              });
+          }
+        });
+
+        // Refresh jobs
+        $("#refresh-all").click(function () {
+          refreshJobs();
+        });
+
+        function createRecordingJob() {
+          createJob($("#environment").children("option:selected").val(), $("#clientId").val(), $("#clientSecret").val(), $("#startDate").val(), $("#endDate").val())
+            .then(response => {
+              console.log("Response:", response);
+              console.log("Jobs:", jobs);
+              if (response.id) {
+                if (!jobs.includes(response.id)) {
+                  jobs.push(response.id);
+                  refreshJobs();
+                }
+              }
+            })
+            .catch(error => {
+              console.error(error);
+              alert("Error in createRecordingJob():" + error.statusText);
+            })
+            .finally(() => {
+              clearLoading("#connect"); // Stop showing spinner on Connect button
+            });
+        }
+
+        function refreshJobs() {
+          $("#jobs").empty();
+          //TODO Use SetInterval({}, 10000) to refresh automatically
+          $.each(jobs, (i, jobId) => {
+            if (!jobId) return;
+            getJob(jobId).then((job) => {
+              createJobCard(jobId, job);
+            })
+              .catch((error) => {
+                console.error("Error while retrieving job " + jobId + ":", error);
+                alert("Error while retrieving job:" + jobId + " - " + error.statusText);
+              });
+          });
+        }
+
+        function createJobCard(jobId, job) {
+
+          console.log(`Adding card for job ${jobId}:`, job);
+          let card = $("<div/>", { class: "card-mb-3" }).appendTo("#jobs");
+
+          // Accordion Header
+          let cardHeader = $("<div/>", { class: "card-header" }).appendTo(card);
+          var accordionTitle = $("<a/>", { class: "btn btn-link", "data-toggle": "collapse", href: "#entry" + jobId }).appendTo(cardHeader);
+          $("<i/>", { class: "ti-angle-right" }).appendTo(accordionTitle)
+          accordionTitle.append(`${job.interval.from} to ${job.interval.to} (${job.status})`);
+
+          // Accordion
+          let accordionDiv = $("<div/>", { id: "entry" + jobId, class: "collapse", "data-parent": "#purecloudaccordion" }).appendTo(card);
+          let cardBody = $("<div/>", { class: "card-body" }).appendTo(accordionDiv);
+
+          // Add link to conversations data
+          if (job.dataUrl) {
+            $("<a/>", { href: job.dataUrl, text: "Conversations Data", target: "_blank" }).appendTo(cardBody);
+          }
+
+          // Table
+          let table = $("<table/>", { class: "table table-striped table-hover table-sm" }).appendTo(cardBody);
+
+          // Table headers
+          let thead = $("<thead/>", {}).appendTo(table);
+          let tr = $("<tr/>", {}).appendTo(thead);
+          $("<th/>", { class: "active" }).text("Id").appendTo(tr);
+          $("<th/>", {}).text("Progress").appendTo(tr);
+          $("<th/>", {}).text("Download Link").appendTo(tr);
+
+          // Table body
+          let tbody = $("<tbody/>", { id: "recordings_" + jobId }).appendTo(table);
+          populateTable("recordings_" + jobId, job);
+        }
+
+        function populateTable(tableName, job) {
+
+          console.log("Populating table for:", job);
+
+          // Clear table
+          $("#" + tableName).empty();
+
+          // Get jobs info
+          $.each(job.transcodingProgress, (i, transcodingItem) => {
+            console.log("Adding Transcoding progress item:", transcodingItem);
+
+            // Add new ro
+            var row = $("<tr />").appendTo("#" + tableName);
+
+            // Id Column
+            $("<td />", {}).text(transcodingItem.jobId).appendTo(row);
+
+            // Progress Column
+            $("<td />", {}).text(transcodingItem.progress).appendTo(row);
+
+            // Download Link Column
+            var downloadLinkTd = $("<td />", {}).appendTo(row);
+            if (transcodingItem.url) {
+              if (transcodingItem.url.startsWith("https://")) {
+                // Show download url
+                $("<a/>", { href: transcodingItem.url, target: "_blank", text: "Link" }).appendTo(downloadLinkTd);
+              } else {
+                // Show transcoding item status
+                downloadLinkTd.text(transcodingItem.url);
+              }
+            }
+
+          });
+        }
+      </script>
+</body>
+
+</html>
