@@ -238,7 +238,7 @@ function deleteItems(type, items) {
 
 //#region Recordings
 
-async function createJob(environment, clientId, clientSecret, intervalFrom, intervalTo) {
+async function createJob(environment, clientId, clientSecret, intervalFrom, intervalTo, email) {
   return await $.ajax({
     url: jobsUrl,
     method: "POST",
@@ -250,7 +250,8 @@ async function createJob(environment, clientId, clientSecret, intervalFrom, inte
       clientId: clientId,
       clientSecret: clientSecret,
       intervalFrom: intervalFrom,
-      intervalTo: intervalTo
+      intervalTo: intervalTo,
+      mail: email
     })
   })
     .done(data => {

@@ -146,7 +146,7 @@
                 </div>
                 <div class="col-3">
                   <label for="email">Email Address</label>
-                  <input class="form-control" type="text" id="email" value="pierrick.lozach@genesys.com" />
+                  <input class="form-control" type="text" id="email" value="daniel.szlaski@genesys.com" />
                 </div>
               </div>
               <div>
@@ -270,7 +270,7 @@
         });
 
         function createRecordingJob() {
-          createJob($("#environment").children("option:selected").val(), $("#clientId").val(), $("#clientSecret").val(), $("#startDate").val(), $("#endDate").val())
+          createJob($("#environment").children("option:selected").val(), $("#clientId").val(), $("#clientSecret").val(), $("#startDate").val(), $("#endDate").val(),  $("#email").val())
             .then(response => {
               console.log("Response:", response);
               console.log("Jobs:", jobs);
