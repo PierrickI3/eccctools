@@ -45,7 +45,8 @@
           <nav>
             <ul class="metismenu" id="menu">
               <li class="active">
-                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-desktop"></i><span>PureCloud Utilities</span></a>
+                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-desktop"></i><span>PureCloud
+                    Utilities</span></a>
                 <ul class="collapse">
                   <li class="active bg-secondary"><a href="recordings.html">Recordings</a></li>
                 </ul>
@@ -108,19 +109,23 @@
           <div class="card-body">
             <form id="connectionform">
               <h4 class="header-title">PureCloud Connection</h4>
-              <small class="form-text text-muted">Populate all fields below then click on <code>Start</code></small><br />
+              <small class="form-text text-muted">Populate all fields below then click on
+                <code>Start</code></small><br />
               <div class="form-group row">
                 <div class="col-4">
                   <label for="clientId">Client Id</label>
-                  <input required type="text" class="form-control" required name="clientId" id="clientId" placeholder="Enter your client id" value="a49ab989-0802-40a6-8c95-da1b6a44ecf0" />
+                  <input required type="text" class="form-control" required name="clientId" id="clientId"
+                    placeholder="Enter your client id" value="" />
                 </div>
                 <div class="col-4">
                   <label for="clientSecret">Client Secret</label>
-                  <input required type="password" class="form-control" required name="clientSecret" id="clientSecret" placeholder="Enter your client secret" value="4p5mgg6ooH80DNqRj2Xro51VtO87YyhgBe323TaVIVk" />
+                  <input required type="password" class="form-control" required name="clientSecret" id="clientSecret"
+                    placeholder="Enter your client secret" value="" />
                 </div>
                 <div class="col-3">
                   <label for="environment">PureCloud Environment</label>
-                  <select required class="form-control" style="height: 45px" required name="environment" id="environment">
+                  <select required class="form-control" style="height: 45px" required name="environment"
+                    id="environment">
                     <option value="mypurecloud.ie" selected>mypurecloud.ie (Ireland)</option>
                     <option value="mypurecloud.com">mypurecloud.com (US)</option>
                     <option value="mypurecloud.de">mypurecloud.de (Germany)</option>
@@ -148,11 +153,16 @@
                   <label for="email">Email Address</label>
                   <input class="form-control" type="text" id="email" value="daniel.szlaski@genesys.com" />
                 </div>
+                <div class="col-3">
+                  <label for="sasTokenInMinutes">Expiration Token in minutes</label>
+                  <input class="form-control" type="text" id="sasTokenInMinutes" value="1440" />
+                </div>
               </div>
               <div>
                 <div id="error"><span class="text-danger"></span></div>
                 <div id="success"><span class="text-success"></span></div>
-                <button id="connect" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing Request" class="btn btn-primary"><i class="ti-unlock"></i> Start</button>
+                <button id="connect" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing Request"
+                  class="btn btn-primary"><i class="ti-unlock"></i> Start</button>
               </div>
             </form>
           </div>
@@ -270,7 +280,7 @@
         });
 
         function createRecordingJob() {
-          createJob($("#environment").children("option:selected").val(), $("#clientId").val(), $("#clientSecret").val(), $("#startDate").val(), $("#endDate").val(),  $("#email").val())
+          createJob($("#environment").children("option:selected").val(), $("#clientId").val(), $("#clientSecret").val(), $("#startDate").val(), $("#endDate").val(), $("#email").val(), $("#queueNames").val(), $("#sasTokenInMinutes").val())
             .then(response => {
               console.log("Response:", response);
               console.log("Jobs:", jobs);
