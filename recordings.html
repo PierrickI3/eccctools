@@ -171,6 +171,18 @@
           <div class="card-body">
             <h4 class="header-title">PureCloud Recordings Jobs</h4>
             <p class="text-muted">Please wait while all jobs are being processed<p><br>
+                <div class="form-group row">
+                  <div class="col-2">
+
+                    <button id="monitorJob" type="button" class="btn btn-primary btn-sm">Manual jobId to
+                      monitor</button>
+
+                  </div>
+                  <div class="col-3">
+                    <input class="form-control" type="text" id="jobIdToMonitor" value="" />
+                  </div>
+                </div>
+
                 <button id="refresh-all" type="button" class="btn btn-info btn-sm">Refresh All</button>
                 <div id="purecloudaccordion" class="accordion accordion-s3 mt-3">
                   <!-- Jobs -->
@@ -214,6 +226,7 @@
       <script>
         var jobs = [];
 
+
         var setLoading = function (button) {
           var search = $(button);
           if (!search.data("normal-text")) {
@@ -229,6 +242,8 @@
 
         // Init
         $("#pureCloudObjects").hide();
+        $("#refresh-all").hide();
+
 
         $("#connectionform").validate({
           errorClass: "text-danger border border-danger",
@@ -243,7 +258,6 @@
             }
           }
         });
-
 
 
         // Connect to PureCloud Button
@@ -276,10 +290,19 @@
               });
           }
         });
-
+        $("#pureCloudObjects").show();
         // Refresh jobs
         $("#refresh-all").click(function () {
           refreshJobs();
+        });
+
+        // monitor JobId
+        $("#monitorJob").click(function () {
+          if ($("#jobIdToMonitor").val()) {
+            jobs.push($("#jobIdToMonitor").val().trim());
+            refreshJobs();
+          }
+
         });
 
         function createRecordingJob() {
@@ -305,18 +328,30 @@
 
 
         function refreshJobs() {
+
           $("#jobs").empty();
-          //TODO Use SetInterval({}, 10000) to refresh automatically
+
+          var bFoundAtLeastOneJob = false;
           $.each(jobs, (i, jobId) => {
-            if (!jobId) return;
+            if (!jobId) {
+              $("#refresh-all").hide();
+              return
+            }
             getJob(jobId).then((job) => {
               createJobCard(jobId, job);
+              if (!bFoundAtLeastOneJob) {
+                $("#refresh-all").show();
+                bFoundAtLeastOneJob = true;
+              }
+
             })
               .catch((error) => {
                 console.error("Error while retrieving job " + jobId + ":", error);
                 alert("Error while retrieving job:" + jobId + " - " + error.statusText);
               });
           });
+
+
         }
 
         function createJobCard(jobId, job) {
@@ -338,21 +373,22 @@
           // Add link to conversations data
 
 
-          let sTitleText = "<table style=\"border: \"0\"; border-collapse: collapse;\" ><tr><td></td><td></td></tr>" +
-            `<tr><td>JobTitle</th><th>${job.title}</td></tr>` + 
-            `<tr><td>JobId</th><th>${job.id}</td></tr>` + 
-            `<tr><td>StartTime</th><th>${job.executionTime.start}</td></tr>` + 
-            `<tr><td>FinishTime</th><th>${job.executionTime.end}</td></tr>` +
+          let sTitleText = "<p class=\"form-text text-muted\">Job summary</p><table style=\"border: \"0\"; border-collapse: collapse;\" ><tr><td></td><td></td><td></td></tr>" +
+            `<tr><td>job Name</td><td>&emsp;</td><td>${job.title}</td></tr>` +
+            `<tr><td>jobId</td><td>&emsp;</td><td>${job.id}</td></tr>` +
+            `<tr><td>start time</td><td>&emsp;</td><td>${job.executionTime.start}</td></tr>` +
+            `<tr><td>finish time</td><td>&emsp;</td><td>${job.executionTime.end}</td></tr>` +
+            `<tr><td>archive size</td><td>&emsp;</td><td id="${job.id}_archiveSize">N/A</td></tr>` +
             '</table>';
 
-          $("<ul class=\"list-group\"><li class=\"list-group-item list-group-item-success\">" + sTitleText + "</li></ul></br>", {}).appendTo(cardBody);
+          $("<ul class=\"list-group\"><li class=\"list-group-item list-group-item-primary\">" + sTitleText + "</li></ul></br>", {}).appendTo(cardBody);
 
           if (job.dataUrl) {
             $("<a/>", {}).html("Link to download metadata:&nbsp&nbsp").appendTo(cardBody);
             $("<a/>", { href: job.dataUrl, text: "download link", target: "_blank" }).appendTo(cardBody);
           }
 
-          $("<br/><br/><span><b>Media section</b></span><br/><br/>", {}).appendTo(cardBody);
+          $("<br><br><span><h5 class=\"form-text text-muted\">Media section</h5></span><br>", {}).appendTo(cardBody);
           // Table
           let table = $("<table border=0><colgroup><col style=\"width:30%\"><col style=\"width:20%\"><col style=\"width:10%\"><col style=\"width:15%\"><col style=\"width:15%\"></colgroup>", { class: "table table-striped table-hover table-sm" }).appendTo(cardBody);
 
@@ -381,6 +417,8 @@
           $("#" + tableName).empty();
 
           // Get jobs info
+          var iTotalSize = 0;
+
           $.each(job.transcodingProgress, (i, transcodingItem) => {
             console.log("Adding Transcoding progress item:", transcodingItem);
 
@@ -410,8 +448,13 @@
               }
             }
             $("<td />", {}).html(`${Math.round(transcodingItem.size)} MB`).appendTo(row);
+            iTotalSize = iTotalSize + transcodingItem.size;
 
           });
+
+          $(`${job.id}_archiveSize`).text = Math.round(iTotalSize);
+
+
         }
       </script>
 
