@@ -407,7 +407,6 @@
 
           // Add link to conversations data
 
-
           let sTitleText = "<p class=\"form-text text-muted\">Job summary</p><table style=\"border:0;\" > <colgroup><col style=\"width:20%\"><col style=\"width:10%\"><col style=\"width:70%\"></colgroup><tr><td></td><td></td><td></td></tr>" +
             `<tr><td>job Name</td><td>&emsp;</td><td>${job.name}</td></tr>` +
             `<tr><td>jobId</td><td>&emsp;</td><td>${job.id}</td></tr>` +
@@ -415,7 +414,7 @@
             `<tr><td>interval to</td><td>&emsp;</td><td>${new Date(job.interval.to).toLocaleDateString()}</td></tr>` +
             `<tr><td>start time</td><td>&emsp;</td><td>${job.executionTime.start}</td></tr>` +
             `<tr><td>finish time</td><td>&emsp;</td><td>${job.executionTime.end}</td></tr>` +
-            `<tr><td>archive size</td><td>&emsp;</td><td id="${job.id}_archiveSize">N/A</td></tr>` +
+            `<tr><td>media zip total</td><td>&emsp;</td><td id="${job.id}_archiveSize">N/A</td></tr>` +
             '</table>';
 
           let sItemColor;
@@ -448,7 +447,9 @@
 
           // Table body
           let tbody = $("<tbody />", { id: "recordings_" + jobId }).appendTo(table);
-          populateTable("recordings_" + jobId, job);
+          let totalSize = populateTable("recordings_" + jobId, job);
+          console.log(totalSize);
+          $(`#${jobId}_archiveSize`).html(`${Math.round(totalSize)} MB`);
           $("<table/>", {}).appendTo(table);
 
           // Download all results
@@ -512,17 +513,10 @@
 
           });
 
-          $(`${job.id}_archiveSize`).text = Math.round(iTotalSize);
-
+          //$(`${job.id}_archiveSize`).text = Math.round(iTotalSize);
+          return iTotalSize
 
         }
-
-        /*
-        var links = [
-          'https://protect-us.mimecast.com/s/lgmwCZ6mWEi40MDvizGbFt?domain=u8566054.ct.sendgrid.net',
-          'https://protect-us.mimecast.com/s/Q1WhC1wB9khzlpkgSGIezE?domain=u8566054.ct.sendgrid.net'
-        ];
-        */
 
 
       </script>
