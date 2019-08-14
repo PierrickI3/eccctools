@@ -136,6 +136,11 @@
               </div>
               <div class="form-group row">
                 <div class="col-3">
+                  <label for="jobName">Job Name</label>
+                  <input required class="form-control" type="text" id="jobName" value=""
+                    placeholder="Your friendly job name" />
+                </div>
+                <div class="col-3">
                   <label for="startDate">Start Date/Time</label>
                   <input required class="form-control" type="date" id="startDate" value="2019-08-01" />
                 </div>
@@ -174,7 +179,7 @@
                 <div class="form-group row">
                   <div class="col-2">
 
-                    <button id="monitorJob" type="button" class="btn btn-primary btn-sm">Manual jobId to
+                    <button id="monitorJob" type="button" class="btn btn-primary btn-sm">jobId to
                       monitor</button>
 
                   </div>
@@ -306,7 +311,7 @@
         });
 
         function createRecordingJob() {
-          createJob($("#environment").children("option:selected").val(), $("#clientId").val(), $("#clientSecret").val(), $("#startDate").val(), $("#endDate").val(), $("#email").val(), $("#queueNames").val(), $("#sasTokenInMinutes").val())
+          createJob($("#jobName").val(), $("#environment").children("option:selected").val(), $("#clientId").val(), $("#clientSecret").val(), $("#startDate").val(), $("#endDate").val(), $("#email").val(), $("#queueNames").val(), $("#sasTokenInMinutes").val())
             .then(response => {
               console.log("Response:", response);
               console.log("Jobs:", jobs);
@@ -364,7 +369,10 @@
           let cardHeader = $("<div/>", { class: "card-header" }).appendTo(card);
           var accordionTitle = $("<a/>", { class: "", "data-toggle": "collapse", href: "#entry" + jobId }).appendTo(cardHeader);
           $("<i/>", { class: "ti-angle-right" }).appendTo(accordionTitle)
-          accordionTitle.append(`${job.interval.from} to ${job.interval.to} (${job.status})`);
+          if (job.name)
+            accordionTitle.append(`${job.name} (${job.status})`)
+          else
+            accordionTitle.append(`${job.from}-${job.to} (${job.status})`);
 
           // Accordion
           let accordionDiv = $("<div/>", { id: "entry" + jobId, class: "collapse", "data-parent": "#purecloudaccordion" }).appendTo(card);
@@ -373,9 +381,11 @@
           // Add link to conversations data
 
 
-          let sTitleText = "<p class=\"form-text text-muted\">Job summary</p><table style=\"border: \"0\"; border-collapse: collapse;\" ><tr><td></td><td></td><td></td></tr>" +
-            `<tr><td>job Name</td><td>&emsp;</td><td>${job.title}</td></tr>` +
+          let sTitleText = "<p class=\"form-text text-muted\">Job summary</p><table style=\"border:0;\" > <colgroup><col style=\"width:20%\"><col style=\"width:10%\"><col style=\"width:70%\"></colgroup><tr><td></td><td></td><td></td></tr>" +
+            `<tr><td>job Name</td><td>&emsp;</td><td>${job.name}</td></tr>` +
             `<tr><td>jobId</td><td>&emsp;</td><td>${job.id}</td></tr>` +
+            `<tr><td>interval from</td><td>&emsp;</td><td>${new Date(job.interval.from).toLocaleDateString()}</td></tr>` +
+            `<tr><td>interval to</td><td>&emsp;</td><td>${new Date(job.interval.to).toLocaleDateString()}</td></tr>` +
             `<tr><td>start time</td><td>&emsp;</td><td>${job.executionTime.start}</td></tr>` +
             `<tr><td>finish time</td><td>&emsp;</td><td>${job.executionTime.end}</td></tr>` +
             `<tr><td>archive size</td><td>&emsp;</td><td id="${job.id}_archiveSize">N/A</td></tr>` +
