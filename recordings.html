@@ -137,7 +137,7 @@
               <div class="form-group row">
                 <div class="col-3">
                   <label for="jobName">Job Name</label>
-                  <input required class="form-control" type="text" id="jobName" value=""
+                  <input class="form-control" type="text" id="jobName" value=""
                     placeholder="Your friendly job name" />
                 </div>
                 <div class="col-3">
@@ -372,7 +372,7 @@
           if (job.name)
             accordionTitle.append(`${job.name} (${job.status})`)
           else
-            accordionTitle.append(`${job.from}-${job.to} (${job.status})`);
+            accordionTitle.append(`${job.interval.from}-${job.interval.to} (${job.status})`);
 
           // Accordion
           let accordionDiv = $("<div/>", { id: "entry" + jobId, class: "collapse", "data-parent": "#purecloudaccordion" }).appendTo(card);
