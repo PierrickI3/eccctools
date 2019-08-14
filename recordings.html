@@ -137,8 +137,7 @@
               <div class="form-group row">
                 <div class="col-3">
                   <label for="jobName">Job Name</label>
-                  <input class="form-control" type="text" id="jobName" value=""
-                    placeholder="Your friendly job name" />
+                  <input class="form-control" type="text" id="jobName" value="" placeholder="Your friendly job name" />
                 </div>
                 <div class="col-3">
                   <label for="startDate">Start Date/Time</label>
@@ -184,7 +183,8 @@
 
                   </div>
                   <div class="col-3">
-                    <input class="form-control" type="text" id="jobIdToMonitor" value="" />
+                    <input class="form-control" type="text" id="jobIdToMonitor"
+                      value="" />
                   </div>
                 </div>
 
@@ -230,7 +230,7 @@
 
       <script>
         var jobs = [];
-
+        var links = [];
 
         var setLoading = function (button) {
           var search = $(button);
@@ -296,6 +296,7 @@
           }
         });
         $("#pureCloudObjects").show();
+
         // Refresh jobs
         $("#refresh-all").click(function () {
           refreshJobs();
@@ -359,6 +360,32 @@
 
         }
 
+        function downloadAll(_jobId) {
+          console.log(`try to download all results for JobId: ${_jobId}`);
+          urls = links[_jobId];
+          
+          urls.forEach((report, index) => {
+            var downloadUrl = report
+            setTimeout(function () {
+              var a = document.createElement('a');
+              a.href = downloadUrl;
+              a.setAttribute('Content-type', 'application/zip');
+              a.target = '_blank';
+              if ('download' in a) {
+                a.download = downloadUrl;
+              }
+
+              (document.body || document.documentElement).appendChild(a);
+              if (a.click) {
+                a.click(); // The click method is supported by most browsers.
+              }
+              a.parentNode.removeChild(a);
+            }, 500);
+
+          });
+
+        }
+
         function createJobCard(jobId, job) {
 
           console.log(`Adding card for job ${jobId}:`, job);
@@ -391,7 +418,15 @@
             `<tr><td>archive size</td><td>&emsp;</td><td id="${job.id}_archiveSize">N/A</td></tr>` +
             '</table>';
 
-          $("<ul class=\"list-group\"><li class=\"list-group-item list-group-item-primary\">" + sTitleText + "</li></ul></br>", {}).appendTo(cardBody);
+          let sItemColor;
+          if (job.status == 'completed' && !job.err) {
+            sItemColor = "success"
+          } else if (job.status == 'completed' && job.err) {
+            sItemColor = "danger"
+          } else
+            sItemColor = "primary"
+
+          $(`<ul class=\"list-group\"><li class=\"list-group-item list-group-item-${sItemColor}\">` + sTitleText + "</li></ul></br>", {}).appendTo(cardBody);
 
           if (job.dataUrl) {
             $("<a/>", {}).html("Link to download metadata:&nbsp&nbsp").appendTo(cardBody);
@@ -415,6 +450,21 @@
           let tbody = $("<tbody />", { id: "recordings_" + jobId }).appendTo(table);
           populateTable("recordings_" + jobId, job);
           $("<table/>", {}).appendTo(table);
+
+          // Download all results
+          var myLinks = [];
+          if (job.dataUrl)
+            myLinks.push(job.dataUrl);
+          $.each(job.transcodingProgress, (i, transcodingItem) => {
+            if (transcodingItem.url) {
+              if (transcodingItem.url.startsWith("https://")) {
+                myLinks.push(transcodingItem.url);
+              }
+            }
+          });
+          links[jobId] = myLinks;
+
+          $(`<br/><button id=\"btnDownloadAll\"type=\"button\" class=\"btn btn-primary btn-sm\" onClick=\"downloadAll('${jobId}');\"><span class="ti-download"></span><i>&nbsp;</i>   Download all archives</button>`, {}).appendTo(cardBody);         
 
         }
 
@@ -466,7 +516,17 @@
 
 
         }
+
+        /*
+        var links = [
+          'https://protect-us.mimecast.com/s/lgmwCZ6mWEi40MDvizGbFt?domain=u8566054.ct.sendgrid.net',
+          'https://protect-us.mimecast.com/s/Q1WhC1wB9khzlpkgSGIezE?domain=u8566054.ct.sendgrid.net'
+        ];
+        */
+
+
       </script>
+
 
 </body>
 
