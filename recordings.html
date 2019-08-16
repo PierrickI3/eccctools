@@ -177,13 +177,11 @@
             <p class="text-muted">Please wait while all jobs are being processed<p><br>
                 <div class="form-group row">
                   <div class="col-2">
-
-                    <button id="monitorJob" type="button" class="btn btn-primary btn-sm">jobId to
-                      monitor</button>
-
+                    <input class="form-control" type="text" id="jobIdToMonitor" value="" />
                   </div>
                   <div class="col-3">
-                    <input class="form-control" type="text" id="jobIdToMonitor" value="" />
+                    <button id="monitorJob" type="button" class="btn btn-primary btn-sm">jobId to
+                      monitor</button>
                   </div>
                 </div>
 
@@ -197,6 +195,29 @@
                 </div>
           </div>
         </div>
+     
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                ...
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- main content area end -->
         <!-- footer area start-->
         <footer>
@@ -228,6 +249,7 @@
       <script src="assets/js/sweetalert.min.js"></script>
       <script src="assets/js/jquery.validate.min.js"></script>
       <script src="assets/js/additional-methods.min.js"></script>
+
 
 
       <script>
@@ -306,9 +328,10 @@
           refreshJobs();
         });
 
+
         // monitor JobId
         $("#monitorJob").click(function () {
-          let newJobid = $("#jobIdToMonitor").val().trim();
+          let newJobid = escapeHtml($("#jobIdToMonitor").val().trim());
           console.log(`try to add new ${newJobid}`);
 
           var bFoundItem = false;
@@ -334,6 +357,16 @@
           }
 
         });
+
+        function escapeHtml(unsafe) {
+          return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        }
+
 
         function createRecordingJob() {
           createJob($("#jobName").val(), $("#environment").children("option:selected").val(), $("#clientId").val(), $("#clientSecret").val(), $("#startDate").val(), $("#endDate").val(), $("#email").val(), $("#queueNames").val(), $("#sasTokenInMinutes").val())
@@ -398,8 +431,9 @@
             })
               .catch((error) => {
                 console.error("Error while retrieving job " + jobId + ":", error);
+                $('#myModal').modal();
                 alert("Error while retrieving job:" + jobId + " - " + error.statusText);
-
+                deleteJob(jobId);
               });
           });
 
@@ -517,20 +551,25 @@
           $(`#${jobId}_archiveSize`).html(`${Math.round(totalSize)} MB`);
           $("<table/>", {}).appendTo(table);
 
-          // Download all results
-          var myLinks = [];
-          if (job.dataUrl)
-            myLinks.push(job.dataUrl);
-          $.each(job.transcodingProgress, (i, transcodingItem) => {
-            if (transcodingItem.url) {
-              if (transcodingItem.url.startsWith("https://")) {
-                myLinks.push(transcodingItem.url);
+          if (job.name != 'unknown' && !job.err) {
+            // Download all results
+            var myLinks = [];
+            if (job.dataUrl)
+              myLinks.push(job.dataUrl);
+            $.each(job.transcodingProgress, (i, transcodingItem) => {
+              if (transcodingItem.url) {
+                if (transcodingItem.url.startsWith("https://")) {
+                  myLinks.push(transcodingItem.url);
+                }
               }
-            }
-          });
-          links[jobId] = myLinks;
+            });
+            links[jobId] = myLinks;
 
-          $(`<br/><button id=\"btnDownloadAll\"type=\"button\" class=\"btn btn-primary btn-sm\" onClick=\"downloadAll('${jobId}');\"><span class="ti-download"></span><i>&nbsp;</i>   Download all archives</button>`, {}).appendTo(cardBody);
+            $(`<br/><button id=\"btnDownloadAll\"type=\"button\" class=\"btn btn-primary btn-sm\" onClick=\"downloadAll('${jobId}');\"><span class="ti-download"></span><i>&nbsp;</i>   Download all archives</button>`, {}).appendTo(cardBody);
+
+          } else {
+            $(`<br/><button id=\"btnDownloadAll\"type=\"button\" class=\"btn btn-primary btn-sm\" disabled><span class="ti-download"></span><i>&nbsp;</i>   Download all archives</button>`, {}).appendTo(cardBody);
+          }
 
         }
 
