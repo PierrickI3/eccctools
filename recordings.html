@@ -183,12 +183,14 @@
 
                   </div>
                   <div class="col-3">
-                    <input class="form-control" type="text" id="jobIdToMonitor"
-                      value="" />
+                    <input class="form-control" type="text" id="jobIdToMonitor" value="" />
                   </div>
                 </div>
 
-                <button id="refresh-all" type="button" class="btn btn-info btn-sm">Refresh All</button>
+                <button id="refresh-all" type="button" class="btn btn-info btn-sm">
+                  <span id="refresh-all-spinner" class="spinner-grow spinner-grow-sm" role="status"
+                    aria-hidden="true"></span>
+                  Refresh All</button>
                 <div id="purecloudaccordion" class="accordion accordion-s3 mt-3">
                   <!-- Jobs -->
                   <div id="jobs"></div>
@@ -232,6 +234,8 @@
         var jobs = [];
         var links = [];
 
+
+
         var setLoading = function (button) {
           var search = $(button);
           if (!search.data("normal-text")) {
@@ -248,7 +252,7 @@
         // Init
         $("#pureCloudObjects").hide();
         $("#refresh-all").hide();
-
+        $('#refresh-all-spinner').hide();
 
         $("#connectionform").validate({
           errorClass: "text-danger border border-danger",
@@ -304,9 +308,29 @@
 
         // monitor JobId
         $("#monitorJob").click(function () {
-          if ($("#jobIdToMonitor").val()) {
-            jobs.push($("#jobIdToMonitor").val().trim());
+          let newJobid = $("#jobIdToMonitor").val().trim();
+          console.log(`try to add new ${newJobid}`);
+
+          var bFoundItem = false;
+          if (jobs.length == 0) {
+            jobs.push(newJobid);
+            $("#jobIdToMonitor")[0].value = "";
             refreshJobs();
+          } else {
+
+            for (var x = 0; x < jobs.length; x++) {
+              if (x == jobs.length - 1 && jobs[x] != newJobid) {
+                jobs.push(newJobid);
+                $("#jobIdToMonitor")[0].value = "";
+                refreshJobs();
+                break
+              } else if (jobs[x] == newJobid) {
+
+                bFoundItem = true;
+                break;
+              }
+            }
+
           }
 
         });
@@ -334,36 +358,71 @@
 
 
         function refreshJobs() {
-
+          $('#refresh-all-spinner').fadeIn();
+          document.getElementById("refresh-all").disabled = true;
           $("#jobs").empty();
 
           var bFoundAtLeastOneJob = false;
           $.each(jobs, (i, jobId) => {
             if (!jobId) {
               $("#refresh-all").hide();
+              $('#refresh-all-spinner').fadeOut();
               return
             }
             getJob(jobId).then((job) => {
-              createJobCard(jobId, job);
-              if (!bFoundAtLeastOneJob) {
-                $("#refresh-all").show();
-                bFoundAtLeastOneJob = true;
+
+              if (Object.keys(job).length > 0) {
+                createJobCard(jobId, job);
+                if (!bFoundAtLeastOneJob) {
+                  $("#refresh-all").show();
+                  bFoundAtLeastOneJob = true;
+                }
+              } else {
+                createJobCard(jobId, {
+                  id: jobId,
+                  name: "unknown",
+                  status: "unknown",
+                  start: "unknown",
+                  interval: {
+                    from: "unknown",
+                    to: "unknown"
+                  },
+                  executionTime: {
+                    start: "unknown",
+                    end: "unknown"
+                  }
+                });
               }
+
 
             })
               .catch((error) => {
                 console.error("Error while retrieving job " + jobId + ":", error);
                 alert("Error while retrieving job:" + jobId + " - " + error.statusText);
+
               });
           });
 
+          $('#refresh-all-spinner').fadeOut();
+          document.getElementById("refresh-all").disabled = false
 
         }
+
+        function deleteJob(_jobId) {
+          console.log(`try to delete jobId: ${_jobId}`);
+          for (var x = 0; x < jobs.length; x++) {
+            if (jobs[x] == _jobId) {
+              jobs.splice(x, 1);
+              refreshJobs();
+            };
+          };
+
+        };
 
         function downloadAll(_jobId) {
           console.log(`try to download all results for JobId: ${_jobId}`);
           urls = links[_jobId];
-          
+
           urls.forEach((report, index) => {
             var downloadUrl = report
             setTimeout(function () {
@@ -395,11 +454,15 @@
           // Accordion Header
           let cardHeader = $("<div/>", { class: "card-header" }).appendTo(card);
           var accordionTitle = $("<a/>", { class: "", "data-toggle": "collapse", href: "#entry" + jobId }).appendTo(cardHeader);
-          $("<i/>", { class: "ti-angle-right" }).appendTo(accordionTitle)
-          if (job.name)
-            accordionTitle.append(`${job.name} (${job.status})`)
+          $("<i/>", { class: "ti-angle-right" }).appendTo(accordionTitle);
+
+          let buttonDef = `<button type="button" class="btn btn-sm btn-outline-danger float-right" style="height:25px; , vertical-align: middle; text-align: center;box-shadow: 4px 4px 4px #999;line-height:0;" onClick=\"deleteJob('${jobId}');\"><small>delete</small></button>`;
+          if (job.name && job.name != 'unknown')
+            accordionTitle.append(`${job.name} (${job.status}) ${buttonDef}`)
+          else if (job.name != 'unknown')
+            accordionTitle.append(`${job.interval.from}-${job.interval.to} (${job.status}) ${buttonDef}`);
           else
-            accordionTitle.append(`${job.interval.from}-${job.interval.to} (${job.status})`);
+            accordionTitle.append(`${job.id} (${job.status}) ${buttonDef}`);
 
           // Accordion
           let accordionDiv = $("<div/>", { id: "entry" + jobId, class: "collapse", "data-parent": "#purecloudaccordion" }).appendTo(card);
@@ -421,6 +484,8 @@
           if (job.status == 'completed' && !job.err) {
             sItemColor = "success"
           } else if (job.status == 'completed' && job.err) {
+            sItemColor = "danger"
+          } else if (job.status == 'unknown') {
             sItemColor = "danger"
           } else
             sItemColor = "primary"
@@ -465,7 +530,7 @@
           });
           links[jobId] = myLinks;
 
-          $(`<br/><button id=\"btnDownloadAll\"type=\"button\" class=\"btn btn-primary btn-sm\" onClick=\"downloadAll('${jobId}');\"><span class="ti-download"></span><i>&nbsp;</i>   Download all archives</button>`, {}).appendTo(cardBody);         
+          $(`<br/><button id=\"btnDownloadAll\"type=\"button\" class=\"btn btn-primary btn-sm\" onClick=\"downloadAll('${jobId}');\"><span class="ti-download"></span><i>&nbsp;</i>   Download all archives</button>`, {}).appendTo(cardBody);
 
         }
 
@@ -508,7 +573,13 @@
                 downloadLinkTd.text(transcodingItem.url);
               }
             }
-            $("<td />", {}).html(`${Math.round(transcodingItem.size)} MB`).appendTo(row);
+            var sArchSize = Math.round(transcodingItem.size);
+            if (sArchSize == 0)
+              sArchSize = `< 0 MB`
+            else
+              sArchSize = `${sArchSize} MB`;
+
+            $("<td />", {}).html(sArchSize).appendTo(row);
             iTotalSize = iTotalSize + transcodingItem.size;
 
           });
