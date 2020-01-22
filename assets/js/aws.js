@@ -238,7 +238,7 @@ function deleteItems(type, items) {
 
 //#region Recordings
 
-async function createJob(environment, clientId, clientSecret, intervalFrom, intervalTo) {
+async function createJob(name, environment, clientId, clientSecret, intervalFrom, intervalTo, email, queueNames, sasToken) {
   return await $.ajax({
     url: jobsUrl,
     method: "POST",
@@ -246,11 +246,15 @@ async function createJob(environment, clientId, clientSecret, intervalFrom, inte
       xhr.setRequestHeader("Content-Type", "application/json");
     },
     data: JSON.stringify({
+      name: name,
       env: environment,
       clientId: clientId,
       clientSecret: clientSecret,
       intervalFrom: intervalFrom,
-      intervalTo: intervalTo
+      intervalTo: intervalTo,
+      mail: email,
+      queueNames: queueNames,
+      sasTokenInMinutes: sasToken
     })
   })
     .done(data => {

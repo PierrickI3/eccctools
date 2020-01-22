@@ -45,7 +45,8 @@
           <nav>
             <ul class="metismenu" id="menu">
               <li class="active">
-                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-desktop"></i><span>PureCloud Utilities</span></a>
+                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-desktop"></i><span>PureCloud
+                    Utilities</span></a>
                 <ul class="collapse">
                   <li class="active bg-secondary"><a href="recordings.html">Recordings</a></li>
                 </ul>
@@ -108,15 +109,16 @@
           <div class="card-body">
             <form id="connectionform">
               <h4 class="header-title">PureCloud Connection</h4>
-              <small class="form-text text-muted">Populate all fields below then click on <code>Start</code></small><br />
+              <small class="form-text text-muted">Populate all fields below then click on
+                <code>Start</code></small><br />
               <div class="form-group row">
                 <div class="col-4">
                   <label for="clientId">Client Id</label>
-                  <input required type="text" class="form-control" required name="clientId" id="clientId" placeholder="Enter your client id" value="a49ab989-0802-40a6-8c95-da1b6a44ecf0" />
+                  <input required type="text" class="form-control" required name="clientId" id="clientId" placeholder="Enter your client id" value="" />
                 </div>
                 <div class="col-4">
                   <label for="clientSecret">Client Secret</label>
-                  <input required type="password" class="form-control" required name="clientSecret" id="clientSecret" placeholder="Enter your client secret" value="4p5mgg6ooH80DNqRj2Xro51VtO87YyhgBe323TaVIVk" />
+                  <input required type="password" class="form-control" required name="clientSecret" id="clientSecret" placeholder="Enter your client secret" value="" />
                 </div>
                 <div class="col-3">
                   <label for="environment">PureCloud Environment</label>
@@ -130,6 +132,10 @@
                 </div>
               </div>
               <div class="form-group row">
+                <div class="col-3">
+                  <label for="jobName">Job Name</label>
+                  <input class="form-control" type="text" id="jobName" value="" placeholder="Your friendly job name" />
+                </div>
                 <div class="col-3">
                   <label for="startDate">Start Date/Time</label>
                   <input required class="form-control" type="date" id="startDate" value="2019-08-01" />
@@ -146,7 +152,11 @@
                 </div>
                 <div class="col-3">
                   <label for="email">Email Address</label>
-                  <input class="form-control" type="text" id="email" value="pierrick.lozach@genesys.com" />
+                  <input class="form-control" type="text" id="email" value="daniel.szlaski@genesys.com" />
+                </div>
+                <div class="col-3">
+                  <label for="sasTokenInMinutes">Expiration Token in minutes</label>
+                  <input class="form-control" type="text" id="sasTokenInMinutes" value="1440" />
                 </div>
               </div>
               <div>
@@ -160,14 +170,47 @@
         <div class="mt-5 mb-5 card card-bordered" id="pureCloudObjects">
           <div class="card-body">
             <h4 class="header-title">PureCloud Recordings Jobs</h4>
-            <small class="text-muted">Please wait while all jobs are being processed</small>
-            <button id="refresh-all" type="button" class="btn btn-info">Refresh All</button>
-            <div id="purecloudaccordion" class="accordion accordion-s3 mt-3">
-              <!-- Jobs -->
-              <div id="jobs"></div>
+            <p class="text-muted">Please wait while all jobs are being processed<p><br>
+                <div class="form-group row">
+                  <div class="col-2">
+                    <input class="form-control" type="text" id="jobIdToMonitor" value="" />
+                  </div>
+                  <div class="col-3">
+                    <button id="monitorJob" type="button" class="btn btn-primary btn-sm">jobId to
+                      monitor</button>
+                  </div>
+                </div>
+
+                <button id="refresh-all" type="button" class="btn btn-info btn-sm">
+                  <span id="refresh-all-spinner" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                  Refresh All</button>
+                <div id="purecloudaccordion" class="accordion accordion-s3 mt-3">
+                  <!-- Jobs -->
+                  <div id="jobs"></div>
+                </div>
+          </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
             </div>
           </div>
         </div>
+
         <!-- main content area end -->
         <!-- footer area start-->
         <footer>
@@ -200,8 +243,13 @@
       <script src="assets/js/jquery.validate.min.js"></script>
       <script src="assets/js/additional-methods.min.js"></script>
 
+
+
       <script>
         var jobs = [];
+        var links = [];
+
+
 
         var setLoading = function (button) {
           var search = $(button);
@@ -218,6 +266,8 @@
 
         // Init
         $("#pureCloudObjects").hide();
+        $("#refresh-all").hide();
+        $('#refresh-all-spinner').hide();
 
         $("#connectionform").validate({
           errorClass: "text-danger border border-danger",
@@ -232,6 +282,7 @@
             }
           }
         });
+
 
         // Connect to PureCloud Button
         $("#connect").click(() => {
@@ -263,14 +314,57 @@
               });
           }
         });
+        $("#pureCloudObjects").show();
 
         // Refresh jobs
         $("#refresh-all").click(function () {
           refreshJobs();
         });
 
+
+        // monitor JobId
+        $("#monitorJob").click(function () {
+          let newJobid = escapeHtml($("#jobIdToMonitor").val().trim());
+          console.log(`try to add new ${newJobid}`);
+
+          var bFoundItem = false;
+          if (jobs.length == 0) {
+            jobs.push(newJobid);
+            $("#jobIdToMonitor")[0].value = "";
+            refreshJobs();
+          } else {
+
+            for (var x = 0; x < jobs.length; x++) {
+              if (x == jobs.length - 1 && jobs[x] != newJobid) {
+                jobs.push(newJobid);
+                $("#jobIdToMonitor")[0].value = "";
+                refreshJobs();
+                break
+              } else if (jobs[x] == newJobid) {
+                $(".modal-title").html('Warning');
+                $(".modal-body").html('Provided JobId already exists in your list');
+                $('#myModal').modal();
+                bFoundItem = true;
+                break;
+              }
+            }
+
+          }
+
+        });
+
+        function escapeHtml(unsafe) {
+          return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        }
+
+
         function createRecordingJob() {
-          createJob($("#environment").children("option:selected").val(), $("#clientId").val(), $("#clientSecret").val(), $("#startDate").val(), $("#endDate").val())
+          createJob($("#jobName").val(), $("#environment").children("option:selected").val(), $("#clientId").val(), $("#clientSecret").val(), $("#startDate").val(), $("#endDate").val(), $("#email").val(), $("#queueNames").val(), $("#sasTokenInMinutes").val())
             .then(response => {
               console.log("Response:", response);
               console.log("Jobs:", jobs);
@@ -290,19 +384,96 @@
             });
         }
 
+
         function refreshJobs() {
+          $('#refresh-all-spinner').fadeIn();
+          document.getElementById("refresh-all").disabled = true;
           $("#jobs").empty();
-          //TODO Use SetInterval({}, 10000) to refresh automatically
+
+          var bFoundAtLeastOneJob = false;
           $.each(jobs, (i, jobId) => {
-            if (!jobId) return;
+            if (!jobId) {
+              $("#refresh-all").hide();
+              $('#refresh-all-spinner').fadeOut();
+              return
+            }
             getJob(jobId).then((job) => {
-              createJobCard(jobId, job);
+
+              if (Object.keys(job).length > 0) {
+                createJobCard(jobId, job);
+                if (!bFoundAtLeastOneJob) {
+                  $("#refresh-all").show();
+                  bFoundAtLeastOneJob = true;
+                }
+              } else {
+                createJobCard(jobId, {
+                  id: jobId,
+                  name: "unknown",
+                  status: "unknown",
+                  start: "unknown",
+                  interval: {
+                    from: "unknown",
+                    to: "unknown"
+                  },
+                  executionTime: {
+                    start: "unknown",
+                    end: "unknown"
+                  }
+                });
+              }
+
+
             })
               .catch((error) => {
                 console.error("Error while retrieving job " + jobId + ":", error);
-                alert("Error while retrieving job:" + jobId + " - " + error.statusText);
+                $(".modal-title").html('Error');
+                $(".modal-body").html("Error while retrieving job " + jobId + ":", error);
+                $('#myModal').modal();
+
+                deleteJob(jobId);
               });
           });
+
+          $('#refresh-all-spinner').fadeOut();
+          document.getElementById("refresh-all").disabled = false
+
+        }
+
+        function deleteJob(_jobId) {
+          console.log(`try to delete jobId: ${_jobId}`);
+          for (var x = 0; x < jobs.length; x++) {
+            if (jobs[x] == _jobId) {
+              jobs.splice(x, 1);
+              refreshJobs();
+            };
+          };
+
+        };
+
+        function downloadAll(_jobId) {
+          console.log(`try to download all results for JobId: ${_jobId}`);
+          urls = links[_jobId];
+
+          urls.forEach((report, index) => {
+            var downloadUrl = report
+            setTimeout(function () {
+              var a = document.createElement('a');
+              a.href = downloadUrl;
+              a.setAttribute('Content-type', 'application/zip');
+              a.target = '_blank';
+              if ('download' in a) {
+                a.download = downloadUrl;
+              }
+
+              (document.body || document.documentElement).appendChild(a);
+              if (a.click) {
+                a.click(); // The click method is supported by most browsers.
+              }
+              a.parentNode.removeChild(a);
+            }, 500);
+
+          });
+
         }
 
         function createJobCard(jobId, job) {
@@ -310,35 +481,95 @@
           console.log(`Adding card for job ${jobId}:`, job);
           let card = $("<div/>", { class: "card-mb-3" }).appendTo("#jobs");
 
+
           // Accordion Header
           let cardHeader = $("<div/>", { class: "card-header" }).appendTo(card);
-          var accordionTitle = $("<a/>", { class: "btn btn-link", "data-toggle": "collapse", href: "#entry" + jobId }).appendTo(cardHeader);
-          $("<i/>", { class: "ti-angle-right" }).appendTo(accordionTitle)
-          accordionTitle.append(`${job.interval.from} to ${job.interval.to} (${job.status})`);
+          var accordionTitle = $("<a/>", { class: "", "data-toggle": "collapse", href: "#entry" + jobId }).appendTo(cardHeader);
+          $("<i/>", { class: "ti-angle-right" }).appendTo(accordionTitle);
+
+          let buttonDef = `<button type="button" class="btn btn-sm btn-outline-danger float-right" style="height:25px; , vertical-align: middle; text-align: center;box-shadow: 4px 4px 4px #999;line-height:0;" onClick=\"deleteJob('${jobId}');\"><small>delete</small></button>`;
+          if (job.name && job.name != 'unknown')
+            accordionTitle.append(`${job.name} (${job.status}) ${buttonDef}`)
+          else if (job.name != 'unknown')
+            accordionTitle.append(`${job.interval.from}-${job.interval.to} (${job.status}) ${buttonDef}`);
+          else
+            accordionTitle.append(`${job.id} (${job.status}) ${buttonDef}`);
 
           // Accordion
           let accordionDiv = $("<div/>", { id: "entry" + jobId, class: "collapse", "data-parent": "#purecloudaccordion" }).appendTo(card);
           let cardBody = $("<div/>", { class: "card-body" }).appendTo(accordionDiv);
 
           // Add link to conversations data
+
+          let sTitleText = "<p class=\"form-text text-muted\">Job summary</p><table style=\"border:0;\" > <colgroup><col style=\"width:20%\"><col style=\"width:10%\"><col style=\"width:70%\"></colgroup><tr><td></td><td></td><td></td></tr>" +
+            `<tr><td>job Name</td><td>&emsp;</td><td>${job.name}</td></tr>` +
+            `<tr><td>jobId</td><td>&emsp;</td><td>${job.id}</td></tr>` +
+            `<tr><td>interval from</td><td>&emsp;</td><td>${new Date(job.interval.from).toLocaleDateString()}</td></tr>` +
+            `<tr><td>interval to</td><td>&emsp;</td><td>${new Date(job.interval.to).toLocaleDateString()}</td></tr>` +
+            `<tr><td>start time</td><td>&emsp;</td><td>${job.executionTime.start}</td></tr>` +
+            `<tr><td>finish time</td><td>&emsp;</td><td>${job.executionTime.end}</td></tr>` +
+            `<tr><td>media zip total</td><td>&emsp;</td><td id="${job.id}_archiveSize">N/A</td></tr>` +
+            '</table>';
+
+          let sItemColor;
+          if (job.status == 'completed' && !job.err) {
+            sItemColor = "success"
+          } else if (job.status == 'completed' && job.err) {
+            sItemColor = "danger"
+          } else if (job.status == 'unknown') {
+            sItemColor = "danger"
+          } else
+            sItemColor = "primary"
+
+          $(`<ul class=\"list-group\"><li class=\"list-group-item list-group-item-${sItemColor}\">` + sTitleText + "</li></ul></br>", {}).appendTo(cardBody);
+
           if (job.dataUrl) {
-            $("<a/>", { href: job.dataUrl, text: "Conversations Data", target: "_blank" }).appendTo(cardBody);
+            $("<a/>", {}).html("Link to download metadata:&nbsp&nbsp").appendTo(cardBody);
+            $("<a/>", { href: job.dataUrl, text: "download link", target: "_blank" }).appendTo(cardBody);
           }
 
+          $("<br><br><span><h5 class=\"form-text text-muted\">Media section</h5></span><br>", {}).appendTo(cardBody);
           // Table
-          let table = $("<table/>", { class: "table table-striped table-hover table-sm" }).appendTo(cardBody);
+          let table = $("<table border=0><colgroup><col style=\"width:30%\"><col style=\"width:20%\"><col style=\"width:10%\"><col style=\"width:15%\"><col style=\"width:15%\"></colgroup>", { class: "table table-striped table-hover table-sm" }).appendTo(cardBody);
 
           // Table headers
-          let thead = $("<thead/>", {}).appendTo(table);
-          let tr = $("<tr/>", {}).appendTo(thead);
-          $("<th/>", { class: "active" }).text("Id").appendTo(tr);
-          $("<th/>", {}).text("Progress").appendTo(tr);
-          $("<th/>", {}).text("Download Link").appendTo(tr);
+          let thead = $("<thead />", {}).appendTo(table);
+          let tr = $("<tr />", {}).appendTo(thead);
+          $("<th />", { class: "active" }).text("Id").appendTo(tr);
+          $("<th />", {}).text("Progress").appendTo(tr);
+          $("<th />", {}).text("").appendTo(tr);
+          $("<th />", {}).text("Download Link").appendTo(tr);
+          $("<th />", {}).text("Archive Size").appendTo(tr);
 
           // Table body
-          let tbody = $("<tbody/>", { id: "recordings_" + jobId }).appendTo(table);
-          populateTable("recordings_" + jobId, job);
+          let tbody = $("<tbody />", { id: "recordings_" + jobId }).appendTo(table);
+          let totalSize = populateTable("recordings_" + jobId, job);
+          console.log(totalSize);
+          $(`#${jobId}_archiveSize`).html(`${Math.round(totalSize)} MB`);
+          $("<table/>", {}).appendTo(table);
+
+          if (job.name != 'unknown' && !job.err) {
+            // Download all results
+            var myLinks = [];
+            if (job.dataUrl)
+              myLinks.push(job.dataUrl);
+            $.each(job.transcodingProgress, (i, transcodingItem) => {
+              if (transcodingItem.url) {
+                if (transcodingItem.url.startsWith("https://")) {
+                  myLinks.push(transcodingItem.url);
+                }
+              }
+            });
+            links[jobId] = myLinks;
+
+            $(`<br/><button id=\"btnDownloadAll\"type=\"button\" class=\"btn btn-primary btn-sm\" onClick=\"downloadAll('${jobId}');\"><span class="ti-download"></span><i>&nbsp;</i>   Download all archives</button>`, {}).appendTo(cardBody);
+
+          } else {
+            $(`<br/><button id=\"btnDownloadAll\"type=\"button\" class=\"btn btn-primary btn-sm\" disabled><span class="ti-download"></span><i>&nbsp;</i>   Download all archives</button>`, {}).appendTo(cardBody);
+          }
+
         }
+
 
         function populateTable(tableName, job) {
 
@@ -348,6 +579,8 @@
           $("#" + tableName).empty();
 
           // Get jobs info
+          var iTotalSize = 0;
+
           $.each(job.transcodingProgress, (i, transcodingItem) => {
             console.log("Adding Transcoding progress item:", transcodingItem);
 
@@ -358,7 +591,12 @@
             $("<td />", {}).text(transcodingItem.jobId).appendTo(row);
 
             // Progress Column
-            $("<td />", {}).text(transcodingItem.progress).appendTo(row);
+
+            //$("<td />", {}).text(transcodingItem.progress).appendTo(row);
+            $("<td />", {}).html("<div class=\"progress \"><dv class=\"progress-bar bg-success\" role=\"progressbar\" style=\"width: " + transcodingItem.progress + "%;\" aria-valuenow=\"" + transcodingItem.progress + "\" aria-valuemin=\"0\" aria-valuemax=\"100\">" + transcodingItem.progress + "%</div></div>").appendTo(row);
+
+            // Empty Column
+            $("<td />", {}).html("&nbsp").appendTo(row);
 
             // Download Link Column
             var downloadLinkTd = $("<td />", {}).appendTo(row);
@@ -371,9 +609,23 @@
                 downloadLinkTd.text(transcodingItem.url);
               }
             }
+            var sArchSize = Math.round(transcodingItem.size);
+            if (sArchSize == 0)
+              sArchSize = `< 0 MB`
+            else
+              sArchSize = `${sArchSize} MB`;
+
+            $("<td />", {}).html(sArchSize).appendTo(row);
+            iTotalSize = iTotalSize + transcodingItem.size;
 
           });
+
+          //$(`${job.id}_archiveSize`).text = Math.round(iTotalSize);
+          return iTotalSize
+
         }
+
+
       </script>
 
       <!-- Coollabs -->
